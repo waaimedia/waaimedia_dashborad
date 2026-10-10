@@ -1,0 +1,65 @@
+<main class="dashboard-layout" dir="ltr">
+  <aside class="sidebar" [class.sidebar--open]="sidebarOpen()">
+    <div class="sidebar-brand">
+      <strong>Waai Media</strong>
+      <span>Admin Panel</span>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Dashboard navigation">
+      @for (item of navigation; track item.label) {
+        @if (item.route) {
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="is-active"
+            (click)="closeSidebar()"
+          >
+            <i [class]="'bi ' + item.icon"></i>
+            <span>{{ item.label }}</span>
+          </a>
+        } @else {
+          <span class="nav-item nav-item--disabled">
+            <i [class]="'bi ' + item.icon"></i>
+            <span>{{ item.label }}</span>
+          </span>
+        }
+      }
+    </nav>
+
+    <footer class="sidebar-footer">
+      <div class="avatar" aria-hidden="true"><i class="bi bi-person-fill"></i></div>
+      <div class="user-details">
+        <strong>Admin User</strong>
+        <span>admin@waaimedia.com</span>
+      </div>
+      <button type="button" aria-label="Log out" (click)="logout()">
+        <i class="bi bi-box-arrow-right"></i>
+      </button>
+    </footer>
+  </aside>
+
+  @if (sidebarOpen()) {
+    <button class="sidebar-backdrop" type="button" aria-label="Close navigation" (click)="closeSidebar()"></button>
+  }
+
+  <section class="dashboard-main">
+    <header class="topbar">
+      <div class="mobile-brand">Waai Media</div>
+      <div class="page-title">
+        <h1>{{ header().title }}</h1>
+        <p>{{ header().subtitle }}</p>
+      </div>
+      @if (header().action; as action) {
+        <a class="header-add-news" [routerLink]="action.route">
+          <i class="bi bi-plus-lg"></i> {{ action.label }}
+        </a>
+      }
+      <button class="menu-toggle" type="button" aria-label="Open navigation" (click)="toggleSidebar()">
+        <i class="bi bi-list"></i>
+      </button>
+    </header>
+
+    <section class="page-content">
+      <router-outlet />
+    </section>
+  </section>
+</main>

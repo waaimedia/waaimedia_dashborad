@@ -1,0 +1,144 @@
+<section class="news-form-page">
+  <div class="mobile-form-heading">
+    <h2>{{ isEditMode() ? 'Update News' : 'Add News' }}</h2>
+    <p>{{ isEditMode() ? 'Update and publish your article' : 'Create and publish new articles' }}</p>
+  </div>
+
+  <form class="news-form" [formGroup]="form" (ngSubmit)="save('Published')" novalidate>
+    <div class="form-grid">
+      <div class="field">
+        <label for="title">News Title</label>
+        <input id="title" type="text" formControlName="title" placeholder="Enter news title..." />
+        @if (form.controls.title.invalid && form.controls.title.touched) {
+          <small>News title is required.</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="category">Category</label>
+        <p-select
+          inputId="category"
+          [options]="categories"
+          optionLabel="label"
+          optionValue="value"
+          formControlName="category"
+          placeholder="Select category..."
+          styleClass="category-select"
+        />
+        @if (form.controls.category.invalid && form.controls.category.touched) {
+          <small>Choose a category.</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="link-one">Add Link 1</label>
+        <input id="link-one" type="url" formControlName="linkOne" placeholder="Enter link here..." />
+      </div>
+
+      <div class="field">
+        <label for="link-two">Add Link 2</label>
+        <input id="link-two" type="url" formControlName="linkTwo" placeholder="Enter link here..." />
+      </div>
+    </div>
+
+    <div class="field featured-image">
+      <label for="featured-image">Featured Image</label>
+      <label class="upload-area" for="featured-image">
+        <input id="featured-image" type="file" accept="image/png,image/jpeg" (change)="selectImage($event)" />
+        <i class="bi bi-cloud-arrow-up-fill"></i>
+        @if (imageName()) {
+          <strong>{{ imageName() }}</strong>
+          <span>Click to replace image</span>
+        } @else {
+          <strong>Click to upload image</strong>
+          <span>PNG, JPG up to 10MB</span>
+        }
+      </label>
+    </div>
+
+    <div class="field">
+      <label for="content">Article Content</label>
+      <input
+        #contentImageInput
+        class="editor-image-input"
+        type="file"
+        accept="image/png,image/jpeg,image/webp"
+        multiple
+        (change)="selectContentImages($event)"
+      />
+      <p-editor
+        inputId="content"
+        formControlName="content"
+        placeholder="Write your article content here..."
+        styleClass="article-editor"
+        (onInit)="onEditorInit($event)"
+        (onTextChange)="updateContentPreview($event)"
+      >
+        <ng-template #header>
+          <span class="ql-formats">
+            <select class="ql-font" aria-label="Font family">
+              <option selected></option>
+              <option value="serif"></option>
+              <option value="monospace"></option>
+            </select>
+            <select class="ql-size" aria-label="Font size">
+              <option value="small"></option>
+              <option selected></option>
+              <option value="large"></option>
+              <option value="huge"></option>
+            </select>
+          </span>
+          <span class="ql-formats">
+            <select class="ql-header" aria-label="Heading level">
+              <option value="1">Heading 1</option>
+              <option value="2">Heading 2</option>
+              <option selected>Normal</option>
+            </select>
+            <button type="button" class="ql-bold" aria-label="Bold"></button>
+            <button type="button" class="ql-italic" aria-label="Italic"></button>
+            <button type="button" class="ql-underline" aria-label="Underline"></button>
+            <button type="button" class="ql-strike" aria-label="Strikethrough"></button>
+          </span>
+          <span class="ql-formats">
+            <select class="ql-color" aria-label="Text color"></select>
+            <select class="ql-background" aria-label="Text background color"></select>
+            <button type="button" class="ql-blockquote" aria-label="Quote"></button>
+            <button type="button" class="ql-code-block" aria-label="Code block"></button>
+          </span>
+          <span class="ql-formats">
+            <button type="button" class="ql-list" value="ordered" aria-label="Numbered list"></button>
+            <button type="button" class="ql-list" value="bullet" aria-label="Bullet list"></button>
+            <button type="button" class="ql-indent" value="-1" aria-label="Decrease indent"></button>
+            <button type="button" class="ql-indent" value="+1" aria-label="Increase indent"></button>
+            <select class="ql-align" aria-label="Text alignment"></select>
+          </span>
+          <span class="ql-formats">
+            <button type="button" class="ql-link" aria-label="Add link"></button>
+            <button type="button" class="ql-image" aria-label="Upload images"></button>
+            <button type="button" class="ql-clean" aria-label="Clear formatting"></button>
+          </span>
+        </ng-template>
+      </p-editor>
+      <small class="editor-help">Use the image button to select one or more images. You can also format text, add colors, and insert links.</small>
+      @if (form.controls.content.invalid && form.controls.content.touched) {
+        <small>Article content must be at least 20 characters.</small>
+      }
+    </div>
+
+    @if (previewHtml()) {
+      <section class="article-preview" aria-label="Article preview">
+        <div class="article-preview__header">
+          <span>Live Preview</span>
+          <small>This is how the article body will appear.</small>
+        </div>
+        <div class="article-preview__content ql-editor" [innerHTML]="previewHtml()"></div>
+      </section>
+    }
+
+    <div class="form-actions">
+      <button type="button" class="cancel" (click)="cancel()">Cancel</button>
+      <button type="button" class="draft" (click)="save('Draft')">Save as a Draft</button>
+      <button type="submit" class="publish"><i class="bi bi-send-fill"></i> Publish News</button>
+    </div>
+  </form>
+</section>

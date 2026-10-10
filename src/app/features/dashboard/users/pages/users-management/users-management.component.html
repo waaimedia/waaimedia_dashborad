@@ -1,0 +1,13 @@
+<section class="team-page">
+  <div class="team-heading"><h2>Manage Users</h2><button class="add-member" type="button" (click)="addUser()"><i class="bi bi-plus-lg"></i> Add User</button></div>
+  <article class="team-panel">
+    <h3>Current Users</h3>
+    <div class="team-table">
+      <div class="team-table__head users-table__head"><span>Name</span><span>Email Address</span><span>Actions</span></div>
+      @for (user of paginatedUsers(); track user.id) {
+        <article class="team-row users-row"><strong>{{ user.name }}</strong><span class="member-role">{{ user.email }}</span><div class="member-actions"><a [routerLink]="['/dashboard/users', user.id, 'edit']" [attr.aria-label]="'Edit ' + user.name"><i class="bi bi-pencil-fill"></i></a><a [routerLink]="['/dashboard/users', user.id, 'change-password']" [attr.aria-label]="'Change password for ' + user.name"><i class="bi bi-key-fill"></i></a><button type="button" (click)="deleteUser(user)" [attr.aria-label]="'Delete ' + user.name"><i class="bi bi-trash3-fill"></i></button></div></article>
+      } @empty { <p class="empty-state">No users yet.</p> }
+    </div>
+    <app-pagination [page]="page()" [pageSize]="pageSize" [totalRecords]="users().length" (pageChange)="changePage($event)" />
+  </article>
+</section>

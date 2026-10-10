@@ -1,0 +1,33 @@
+<section class="client-form-page">
+  <div class="mobile-form-heading">
+    <h2>{{ isEditMode() ? 'Update Client' : 'Add Client' }}</h2>
+    <p>{{ isEditMode() ? 'Update this client' : 'Create a new client' }}</p>
+  </div>
+
+  <form class="client-form" [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <div class="logo-upload">
+      <label class="logo-control" for="client-logo">
+        <input id="client-logo" type="file" accept="image/png,image/jpeg,image/webp" (change)="selectLogo($event)" />
+        @if (logoPreview()) {
+          <img [src]="logoPreview()" alt="Selected client logo" />
+        } @else {
+          <i class="bi bi-camera-fill"></i>
+          <span>Upload Photo</span>
+        }
+        <b><i class="bi bi-plus-lg"></i></b>
+      </label>
+      <p>Upload a client logo</p>
+    </div>
+
+    <div class="field">
+      <label for="full-name">Full Name *</label>
+      <input id="full-name" type="text" formControlName="fullName" placeholder="Enter full name" />
+      @if (form.controls.fullName.invalid && form.controls.fullName.touched) { <small>Client name is required.</small> }
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="save"><i class="bi bi-plus-lg"></i> {{ isEditMode() ? 'Update Client' : 'Save Client' }}</button>
+      <button type="button" class="cancel" (click)="cancel()"><i class="bi bi-x-lg"></i> Cancel</button>
+    </div>
+  </form>
+</section>

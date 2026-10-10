@@ -1,0 +1,23 @@
+@use './styles/variables';
+
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+@import 'quill/dist/quill.snow.css';
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  background: var(--waai-surface);
+  color: var(--waai-text);
+  font-family: var(--waai-font-family);
+  margin: 0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}

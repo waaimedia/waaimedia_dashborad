@@ -1,0 +1,25 @@
+:host { display: block; }
+.mobile-form-heading { display: none; }
+.event-form { background: var(--waai-surface); border: 1px solid #e4e7ec; border-radius: 1rem; box-shadow: 0 .15rem .5rem rgb(16 24 40 / 4%); margin: 1.1rem auto 0; max-width: 70rem; padding: 2.5rem; }
+.form-grid { display: grid; gap: 2rem 2.5rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.field { display: grid; gap: .7rem; }
+.field label, .featured-image > label { color: #435064; font-size: .95rem; font-weight: 750; }
+.field label span { color: #8a93a3; font-weight: 500; }
+.field input { background: #fff; border: 1px solid #d6dce5; border-radius: var(--waai-radius-sm); color: #344054; font: inherit; height: var(--waai-control-height-lg); outline: none; padding: 0 1rem; transition: border-color var(--waai-transition), box-shadow var(--waai-transition); width: 100%; }
+.field input:focus { border-color: var(--waai-primary); box-shadow: 0 0 0 .2rem rgb(231 61 85 / 12%); }
+.field input::placeholder { color: #aab1bf; }
+.field small { color: #d43f51; }
+.featured-image { display: grid; gap: .7rem; }
+.upload-area { align-items: center; border: 2px dashed #d7dde6; border-radius: var(--waai-radius-sm); color: #697586; cursor: pointer; display: flex; flex-direction: column; gap: .2rem; justify-content: center; min-height: 10rem; padding: 1.25rem; }
+.upload-area:hover { background: #fffafb; border-color: var(--waai-primary); }
+.upload-area input { display: none; }
+.upload-area i { color: #a4aebd; font-size: 2rem; }
+.upload-area strong { font-weight: 500; }
+.upload-area span { color: #9aa4b2; font-size: .86rem; }
+.form-actions { border-top: 1px solid #e4e7ec; display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2.7rem; padding-top: 2rem; }
+.form-actions button { border-radius: var(--waai-radius-sm); cursor: pointer; font: inherit; font-weight: 700; min-height: var(--waai-control-height-lg); padding: 0 1.5rem; }
+.cancel { background: #fff; border: 1px solid #d2d9e3; color: #586477; }
+.draft { background: #fff0f2; border: 1px solid #f2c8ce; color: #586477; }
+.publish { background: var(--waai-primary); border: 1px solid var(--waai-primary); color: #fff; }
+.publish:hover { background: var(--waai-primary-dark); }
+@media (max-width: 900px) { .mobile-form-heading { display: block; margin: 0 .9rem 1.2rem; } .mobile-form-heading h2 { color: #1f2937; font-size: 1.25rem; margin: 0 0 .3rem; } .mobile-form-heading p { color: #7b8594; margin: 0; } .event-form { margin: 0; padding: 1.4rem; } .form-grid { gap: 1.25rem; grid-template-columns: 1fr; } .form-actions { flex-wrap: wrap; margin-top: 1.8rem; } .form-actions button { flex: 1 1 100%; } }

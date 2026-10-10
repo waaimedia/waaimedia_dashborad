@@ -1,0 +1,29 @@
+:host { display: block; }
+.mobile-heading { display: none; }
+.counters-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 25rem), 1fr));
+  max-width: 51rem;
+}
+.counter-card { background: #fff; border: 1px solid #e1e6ed; border-radius: var(--waai-radius-sm); min-height: 5.8rem; padding: 1rem; transition: border-color var(--waai-transition), box-shadow var(--waai-transition); }
+.counter-card--editing { border-color: var(--waai-primary); box-shadow: 0 0 0 0.18rem rgb(231 61 85 / 10%); }
+.counter-card__header { align-items: center; color: #435064; display: flex; font-size: 0.78rem; font-weight: 750; justify-content: space-between; }
+.counter-card__header button { background: transparent; border: 0; color: var(--waai-primary); cursor: pointer; font-size: 0.9rem; padding: 0.2rem; }
+.counter-card__header .confirm { color: #23905e; }
+.counter-card strong { color: #354154; display: block; font-size: 1.55rem; letter-spacing: -0.03em; margin-top: 0.65rem; }
+.counter-card input { background: transparent; border: 0; color: #354154; font: inherit; font-size: 1.55rem; font-weight: 750; letter-spacing: -0.03em; margin-top: 0.4rem; outline: 0; padding: 0.2rem 0; width: 100%; }
+.counter-card input::-webkit-inner-spin-button { opacity: 0.45; }
+.save-area { align-items: center; display: flex; justify-content: center; min-height: 5.8rem; }
+.save-area button { align-items: center; background: var(--waai-primary); border: 0; border-radius: var(--waai-radius-sm); color: #fff; cursor: pointer; display: inline-flex; font: inherit; font-size: 0.8rem; font-weight: 700; gap: 0.55rem; min-height: var(--waai-control-height); padding: 0 1.1rem; }
+.save-area button:disabled { cursor: default; opacity: 0.5; }
+.save-area button:not(:disabled):hover { background: var(--waai-primary-dark); }
+
+@media (max-width: 900px) {
+  .mobile-heading { display: block; margin: 0 0.9rem 1.2rem; }
+  .mobile-heading h2 { color: #1f2937; font-size: 1.2rem; margin: 0 0 0.3rem; }
+  .mobile-heading p { color: #7b8594; font-size: 0.9rem; margin: 0; }
+  .counters-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: none; padding: 0 0.25rem; }
+}
+
+@media (max-width: 440px) { .counters-grid { grid-template-columns: 1fr; } }

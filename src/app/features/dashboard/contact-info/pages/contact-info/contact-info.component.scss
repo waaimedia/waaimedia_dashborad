@@ -1,0 +1,39 @@
+:host { display: block; }
+.mobile-heading { display: none; }
+.contact-form { background: var(--waai-surface); border: 1px solid #e2e7ee; border-radius: .8rem; box-shadow: 0 .15rem .45rem rgb(16 24 40 / 4%); margin: .55rem auto 0; max-width: 75rem; padding: 1.8rem 2.2rem 1.5rem; }
+.contact-section { display: grid; gap: 2.5rem; grid-template-columns: 17rem minmax(0, 1fr); padding: 1.6rem 0 2.15rem; }
+.contact-section + .contact-section { border-top: 1px solid #e5e9ef; }
+.section-intro h3 { color: #263246; font-size: 1.15rem; margin: 0 0 .75rem; }
+.section-intro p { color: #566277; line-height: 1.45; margin: 0; max-width: 15rem; }
+.section-intro i { display: none; }
+.section-fields { min-width: 0; }
+.field { display: grid; gap: .55rem; }
+.field > span { color: #435064; font-size: .92rem; font-weight: 650; }
+.field > span i { font-size: .9rem; margin-right: .4rem; }
+.field em { font-style: normal; }
+.field input, .field textarea { background: #fff; border: 1px solid #d2d9e3; border-radius: var(--waai-radius-sm); color: #344054; font: inherit; outline: none; padding: 0 1rem; transition: border-color var(--waai-transition), box-shadow var(--waai-transition); width: 100%; }
+.field input { height: var(--waai-control-height); }
+.field textarea { min-height: 5.8rem; padding: .75rem 1rem; resize: vertical; }
+.field input:focus, .field textarea:focus { border-color: var(--waai-primary); box-shadow: 0 0 0 .2rem rgb(231 61 85 / 12%); }
+.field input::placeholder, .field textarea::placeholder { color: #aab1bf; }
+.field small { color: #d43f51; }
+.phone-fields { display: grid; gap: 1.4rem; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.email-fields { max-width: 25rem; }
+.social-fields { display: grid; gap: 1.25rem 1.4rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.address-fields, .map-fields { max-width: none; }
+.facebook { color: #2574e8; }.instagram { color: #ec3d8d; }.youtube { color: #f00; }.linkedin { color: #2867b2; }.tiktok { color: #111; }.whatsapp { color: #4dc85e; }
+.mobile-label { display: none; }
+.form-actions { border-top: 1px solid #e5e9ef; display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem; padding-top: 1.5rem; }
+.form-actions button { border: 0; border-radius: var(--waai-radius-sm); cursor: pointer; font: inherit; font-weight: 700; min-height: var(--waai-control-height); padding: 0 1.45rem; }
+.cancel { background: #f1f3f6; color: #556176; }.save { background: var(--waai-primary); color: #fff; }.save:hover { background: var(--waai-primary-dark); }
+
+@media (max-width: 900px) {
+  .mobile-heading { display: grid; gap: .55rem; justify-items: center; margin: -.15rem 1rem 1.3rem; text-align: center; }
+  .mobile-heading h2 { color: #303b4c; font-size: 1.25rem; margin: 0; }.mobile-heading p { color: #566277; font-size: .84rem; line-height: 1.45; margin: 0; max-width: 17rem; }
+  .contact-form { background: transparent; border: 0; box-shadow: none; margin: 0; padding: 0 .1rem; }
+  .contact-section, .contact-section + .contact-section { background: var(--waai-surface); border: 1px solid #e2e7ee; border-radius: .55rem; display: block; margin: 0 0 1rem; padding: .9rem; }
+  .section-intro h3 { font-size: .88rem; margin: 0 0 1rem; }.section-intro p { display: none; }.section-intro i { display: inline-block; font-size: .82rem; margin-right: .45rem; }.phone-icon { color: #ef4c5d; }.email-icon { color: #e54859; }.social-icon { color: #e54859; }.address-icon, .map-icon { color: #e54859; }
+  .section-fields { display: grid; }.field { gap: .4rem; }.field > span { font-size: .7rem; }.field input { font-size: .78rem; height: 2rem; padding: 0 .7rem; }.field textarea { font-size: .78rem; min-height: 4.4rem; padding: .65rem .7rem; }
+  .phone-fields, .social-fields { gap: .65rem; grid-template-columns: 1fr; }.email-fields { max-width: none; }.desktop-label { display: none; }.mobile-label { display: inline; }
+  .form-actions { border: 0; display: grid; gap: .7rem; margin: 1.45rem 0 0; padding: 0; }.form-actions button { font-size: .78rem; min-height: 2.1rem; }.save { order: 1; }.cancel { order: 2; }
+}

@@ -1,0 +1,9 @@
+<section class="team-form-page">
+  <div class="mobile-form-heading"><h2>{{ isEditMode() ? 'Update User' : 'Add User' }}</h2><p>{{ isEditMode() ? 'Update this user account' : 'Create a new user account' }}</p></div>
+  <form class="team-form user-form" [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <div class="field"><label for="name">Name *</label><input id="name" type="text" formControlName="name" placeholder="Enter full name" />@if (form.controls.name.invalid && form.controls.name.touched) { <small>Name is required.</small> }</div>
+    <div class="field"><label for="email">Email *</label><input id="email" type="email" formControlName="email" placeholder="name@company.com" />@if (form.controls.email.invalid && form.controls.email.touched) { <small>Enter a valid email address.</small> }</div>
+    <div class="field"><label for="password">Password {{ isEditMode() ? '' : '*' }}</label><input id="password" type="password" formControlName="password" [placeholder]="isEditMode() ? 'Leave blank to keep the current password' : 'Enter a password'" autocomplete="new-password" />@if (form.controls.password.invalid && form.controls.password.touched) { <small>Password must be at least 8 characters.</small> }</div>
+    <div class="form-actions"><button type="submit" class="save"><i class="bi bi-person-plus-fill"></i> {{ isEditMode() ? 'Update User' : 'Save User' }}</button><button type="button" class="cancel" (click)="cancel()"><i class="bi bi-x-lg"></i> Cancel</button></div>
+  </form>
+</section>

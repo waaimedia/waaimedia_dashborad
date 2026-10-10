@@ -1,0 +1,55 @@
+<section class="clients-page">
+  <div class="clients-heading">
+    <h2>Manage Clients</h2>
+    <button class="add-client" type="button" (click)="addClient()"><i class="bi bi-plus-lg"></i> Add Client</button>
+  </div>
+
+  <article class="clients-panel">
+    <h3>Current Clients</h3>
+    <div class="clients-table">
+      <div class="clients-table__head">
+        <span>Photo</span>
+        <span>Name</span>
+        <span>Actions</span>
+      </div>
+
+      @for (client of paginatedClients(); track client.id) {
+        <article class="client-row">
+          <div class="client-logo">
+            @if (client.logoUrl) {
+              <img [src]="client.logoUrl" [alt]="client.fullName" />
+            } @else {
+              <i class="bi bi-building" aria-hidden="true"></i>
+            }
+          </div>
+          <strong>{{ client.fullName }}</strong>
+          <div class="client-actions">
+            <a [routerLink]="['/dashboard/clients', client.id, 'edit']" [attr.aria-label]="'Edit ' + client.fullName">
+              <i class="bi bi-pencil-fill"></i>
+            </a>
+            <button type="button" (click)="deleteClient(client)" [attr.aria-label]="'Delete ' + client.fullName">
+              <i class="bi bi-trash3-fill"></i>
+            </button>
+          </div>
+        </article>
+      } @empty {
+        <p class="empty-state">No clients yet.</p>
+      }
+    </div>
+
+    <app-pagination
+      [page]="page()"
+      [pageSize]="pageSize"
+      [totalRecords]="clients().length"
+      (pageChange)="changePage($event)"
+    />
+  </article>
+
+  <aside class="clients-note">
+    <i class="bi bi-info-circle-fill" aria-hidden="true"></i>
+    <div>
+      <strong>Adding Clients</strong>
+      <p>Add your clients' names and logos to keep the client portfolio up to date.</p>
+    </div>
+  </aside>
+</section>

@@ -1,0 +1,257 @@
+:host {
+  display: block;
+}
+
+.dashboard-layout {
+  --sidebar-width: 18.5rem;
+  background: #f8fafc;
+  display: grid;
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  min-height: 100dvh;
+}
+
+.sidebar {
+  background: var(--waai-surface);
+  border-right: 1px solid #e8ebef;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  z-index: 20;
+}
+
+.sidebar-brand {
+  border-bottom: 1px solid #e8ebef;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-height: 7.25rem;
+  justify-content: center;
+  padding: 1.5rem 1.8rem;
+}
+
+.sidebar-brand strong,
+.mobile-brand {
+  color: #263246;
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+
+.sidebar-brand span,
+.user-details span {
+  color: #8a93a3;
+  font-size: 0.9rem;
+}
+
+.sidebar-nav {
+  display: grid;
+  gap: 0.45rem;
+  padding: 1.75rem 1.2rem;
+}
+
+.sidebar-nav a,
+.nav-item {
+  align-items: center;
+  border-radius: var(--waai-radius-sm);
+  color: #6d7788;
+  display: flex;
+  font-size: 1rem;
+  gap: 1rem;
+  min-height: 3.5rem;
+  padding: 0 1rem;
+  text-decoration: none;
+}
+
+.sidebar-nav a i,
+.nav-item i {
+  font-size: 1.2rem;
+  width: 1.25rem;
+}
+
+.sidebar-nav a:hover {
+  background: #fff4f5;
+  color: var(--waai-primary);
+}
+
+.sidebar-nav a.is-active {
+  background: #fff0f2;
+  border-radius: var(--waai-radius-sm) 0 0 var(--waai-radius-sm);
+  box-shadow: inset -3px 0 0 var(--waai-primary);
+  color: var(--waai-primary);
+  font-weight: 700;
+}
+
+.nav-item--disabled {
+  cursor: default;
+}
+
+.sidebar-footer {
+  align-items: center;
+  border-top: 1px solid #e8ebef;
+  display: flex;
+  gap: 0.75rem;
+  margin-top: auto;
+  min-height: 6.75rem;
+  padding: 1.2rem;
+}
+
+.avatar {
+  align-items: center;
+  background: #dde4ea;
+  border-radius: 50%;
+  color: #697485;
+  display: flex;
+  font-size: 1.2rem;
+  height: 2.85rem;
+  justify-content: center;
+  width: 2.85rem;
+}
+
+.user-details {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.user-details strong {
+  color: #475467;
+  font-size: 0.9rem;
+}
+
+.user-details span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-footer button {
+  background: transparent;
+  border: 0;
+  color: #9aa4b2;
+  cursor: pointer;
+  font-size: 1.2rem;
+  margin-left: auto;
+  padding: 0.4rem;
+}
+
+.dashboard-main {
+  min-width: 0;
+}
+
+.topbar {
+  align-items: center;
+  background: var(--waai-surface);
+  border-bottom: 1px solid #e8ebef;
+  display: flex;
+  min-height: 7.25rem;
+  padding: 1.25rem 2.4rem;
+}
+
+.page-title h1 {
+  color: #303b4c;
+  font-size: 1.85rem;
+  font-weight: 750;
+  letter-spacing: -0.035em;
+  margin: 0 0 0.35rem;
+}
+
+.page-title p {
+  color: #7a8495;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.header-add-news {
+  align-items: center;
+  background: var(--waai-primary);
+  border: 0;
+  border-radius: var(--waai-radius-sm);
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  gap: 0.75rem;
+  margin-left: auto;
+  min-height: var(--waai-control-height);
+  padding: 0 1.45rem;
+  text-decoration: none;
+}
+
+.header-add-news:hover {
+  background: var(--waai-primary-dark);
+}
+
+.mobile-brand,
+.menu-toggle,
+.sidebar-backdrop {
+  display: none;
+}
+
+.page-content {
+  padding: 2.4rem;
+}
+
+@media (max-width: 900px) {
+  .dashboard-layout {
+    display: block;
+  }
+
+  .sidebar {
+    box-shadow: 0 0.75rem 2rem rgb(29 40 55 / 16%);
+    left: 0;
+    position: fixed;
+    top: 0;
+    transform: translateX(-105%);
+    transition: transform var(--waai-transition);
+    width: min(18.5rem, 88vw);
+  }
+
+  .sidebar.sidebar--open {
+    transform: translateX(0);
+  }
+
+  .sidebar-backdrop {
+    background: rgb(18 25 38 / 38%);
+    border: 0;
+    display: block;
+    inset: 0;
+    position: fixed;
+    width: 100%;
+    z-index: 10;
+  }
+
+  .topbar {
+    justify-content: space-between;
+    min-height: 5rem;
+    padding: 1.25rem 1.8rem;
+  }
+
+  .page-title {
+    display: none;
+  }
+
+  .header-add-news {
+    display: none;
+  }
+
+  .mobile-brand,
+  .menu-toggle {
+    display: block;
+  }
+
+  .menu-toggle {
+    background: transparent;
+    border: 0;
+    color: #435064;
+    cursor: pointer;
+    font-size: 1.85rem;
+    line-height: 1;
+    padding: 0;
+  }
+
+  .page-content {
+    padding: 1.35rem 0.7rem 2.5rem;
+  }
+}

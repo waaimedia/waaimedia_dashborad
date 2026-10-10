@@ -1,0 +1,56 @@
+<section class="event-form-page">
+  <div class="mobile-form-heading">
+    <h2>{{ isEditMode() ? 'Update Event' : 'Add Event' }}</h2>
+    <p>{{ isEditMode() ? 'Update your event details' : 'Create and publish new event' }}</p>
+  </div>
+
+  <form class="event-form" [formGroup]="form" (ngSubmit)="save('Published')" novalidate>
+    <div class="form-grid">
+      <div class="field">
+        <label for="title">Event Title</label>
+        <input id="title" type="text" formControlName="title" placeholder="Enter event title..." />
+        @if (form.controls.title.invalid && form.controls.title.touched) { <small>Event title is required.</small> }
+      </div>
+
+      <div class="field">
+        <label for="date">Date</label>
+        <input id="date" type="date" formControlName="date" />
+        @if (form.controls.date.invalid && form.controls.date.touched) { <small>Event date is required.</small> }
+      </div>
+
+      <div class="field">
+        <label for="category">Category</label>
+        <input id="category" type="text" formControlName="category" placeholder="Enter event category..." />
+        @if (form.controls.category.invalid && form.controls.category.touched) { <small>Category is required.</small> }
+      </div>
+
+      <div class="featured-image">
+        <label>Featured Image</label>
+        <label class="upload-area" for="event-image">
+          <input id="event-image" type="file" accept="image/png,image/jpeg" (change)="selectImage($event)" />
+          <i class="bi bi-cloud-arrow-up-fill"></i>
+          <strong>{{ imageName() || 'Click to upload image' }}</strong>
+          <span>PNG, JPG up to 10MB</span>
+        </label>
+      </div>
+
+      <div class="field">
+        <label for="place">Place</label>
+        <input id="place" type="text" formControlName="place" placeholder="Enter place here..." />
+        @if (form.controls.place.invalid && form.controls.place.touched) { <small>Place is required.</small> }
+      </div>
+
+      <div class="field">
+        <label for="event-link">Event Link <span>(optional)</span></label>
+        <input id="event-link" type="url" formControlName="eventLink" placeholder="https://example.com/event" />
+        @if (form.controls.eventLink.invalid && form.controls.eventLink.touched) { <small>Enter a valid URL beginning with http:// or https://.</small> }
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="cancel" (click)="cancel()">Cancel</button>
+      <button type="button" class="draft" (click)="save('Draft')">Save as a Draft</button>
+      <button type="submit" class="publish"><i class="bi bi-send-fill"></i> Publish Event</button>
+    </div>
+  </form>
+</section>

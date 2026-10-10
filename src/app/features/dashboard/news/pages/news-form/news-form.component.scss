@@ -1,0 +1,292 @@
+:host {
+  display: block;
+}
+
+.mobile-form-heading {
+  display: none;
+}
+
+.news-form {
+  background: var(--waai-surface);
+  border: 1px solid #e4e7ec;
+  border-radius: 1rem;
+  box-shadow: 0 0.15rem 0.5rem rgb(16 24 40 / 4%);
+  margin: 1.1rem auto 0;
+  max-width: 70rem;
+  padding: 2.5rem;
+}
+
+.form-grid {
+  display: grid;
+  gap: 2rem 2.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.field {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.field label {
+  color: #435064;
+  font-size: 0.95rem;
+  font-weight: 750;
+}
+
+.field input:not([type='file']) {
+  background: #fff;
+  border: 1px solid #d6dce5;
+  border-radius: var(--waai-radius-sm);
+  color: #344054;
+  font: inherit;
+  outline: none;
+  padding: 0 1rem;
+  transition: border-color var(--waai-transition), box-shadow var(--waai-transition);
+  width: 100%;
+}
+
+.field input:not([type='file']) {
+  height: var(--waai-control-height-lg);
+}
+
+.field input:focus,
+.field:focus-within .article-editor {
+  border-color: var(--waai-primary);
+  box-shadow: 0 0 0 0.2rem rgb(231 61 85 / 12%);
+}
+
+.field input::placeholder {
+  color: #aab1bf;
+}
+
+.field small {
+  color: #d43f51;
+}
+
+.editor-image-input {
+  display: none;
+}
+
+::ng-deep .article-editor {
+  border: 1px solid #d6dce5;
+  border-radius: var(--waai-radius-sm);
+  overflow: hidden;
+  transition: border-color var(--waai-transition), box-shadow var(--waai-transition);
+}
+
+::ng-deep .article-editor .p-editor-toolbar,
+::ng-deep .article-editor .ql-toolbar {
+  background: #fbfcfe;
+  border: 0;
+  border-bottom: 1px solid #dfe4eb;
+  padding: 0.55rem 0.7rem;
+}
+
+::ng-deep .article-editor .p-editor-content,
+::ng-deep .article-editor .ql-container {
+  border: 0;
+}
+
+::ng-deep .article-editor .ql-editor {
+  color: #344054;
+  font-family: var(--waai-font-family);
+  font-size: 1rem;
+  line-height: 1.75;
+  min-height: 22rem;
+  padding: 1rem;
+}
+
+::ng-deep .article-editor .ql-editor.ql-blank::before {
+  color: #aab1bf;
+  font-style: normal;
+}
+
+::ng-deep .article-editor .ql-editor img,
+::ng-deep .article-preview__content img {
+  border-radius: var(--waai-radius-sm);
+  display: block;
+  height: auto;
+  margin: 1rem 0;
+  max-width: 100%;
+}
+
+.editor-help {
+  color: #7b8594 !important;
+  font-size: 0.82rem;
+}
+
+.article-preview {
+  background: #fbfcfe;
+  border: 1px solid #e2e7ee;
+  border-radius: var(--waai-radius-md);
+  margin-top: 1.5rem;
+  overflow: hidden;
+}
+
+.article-preview__header {
+  align-items: center;
+  background: #f4f6f9;
+  border-bottom: 1px solid #e2e7ee;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.85rem 1rem;
+}
+
+.article-preview__header span {
+  color: #344054;
+  font-weight: 750;
+}
+
+.article-preview__header small {
+  color: #7b8594;
+}
+
+::ng-deep .article-preview__content {
+  color: #344054;
+  line-height: 1.75;
+  min-height: 8rem;
+  padding: 1.25rem;
+}
+
+::ng-deep .category-select {
+  border-color: #d6dce5;
+  border-radius: var(--waai-radius-sm);
+    min-height: var(--waai-control-height-lg);
+  width: 100%;
+}
+
+::ng-deep .category-select .p-select-label {
+  padding: 0.75rem 1rem;
+}
+
+.featured-image {
+  margin: 2.6rem 0;
+}
+
+.upload-area {
+  align-items: center;
+  border: 2px dashed #d7dde6;
+  border-radius: var(--waai-radius-sm);
+  color: #697586;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  justify-content: center;
+  min-height: 10rem;
+  padding: 1.25rem;
+}
+
+.upload-area:hover {
+  border-color: var(--waai-primary);
+  background: #fffafb;
+}
+
+.upload-area input {
+  display: none;
+}
+
+.upload-area i {
+  color: #a4aebd;
+  font-size: 2rem;
+}
+
+.upload-area strong {
+  font-weight: 500;
+}
+
+.upload-area span {
+  color: #9aa4b2;
+  font-size: 0.86rem;
+}
+
+.form-actions {
+  border-top: 1px solid #e4e7ec;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2.7rem;
+  padding-top: 2rem;
+}
+
+.form-actions button {
+  border-radius: var(--waai-radius-sm);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+    min-height: var(--waai-control-height-lg);
+  padding: 0 1.5rem;
+}
+
+.cancel {
+  background: #fff;
+  border: 1px solid #d2d9e3;
+  color: #586477;
+}
+
+.draft {
+  background: #fff0f2;
+  border: 1px solid #f2c8ce;
+  color: #586477;
+}
+
+.publish {
+  background: var(--waai-primary);
+  border: 1px solid var(--waai-primary);
+  color: #fff;
+}
+
+.publish:hover {
+  background: var(--waai-primary-dark);
+}
+
+@media (max-width: 900px) {
+  .mobile-form-heading {
+    display: block;
+    margin: 0 0.9rem 1.2rem;
+  }
+
+  .mobile-form-heading h2 {
+    color: #1f2937;
+    font-size: 1.25rem;
+    margin: 0 0 0.3rem;
+  }
+
+  .mobile-form-heading p {
+    color: #7b8594;
+    margin: 0;
+  }
+
+  .news-form {
+    margin: 0;
+    padding: 1.4rem;
+  }
+
+  .form-grid {
+    gap: 1.25rem;
+    grid-template-columns: 1fr;
+  }
+
+  .featured-image {
+    margin: 1.5rem 0;
+  }
+
+  ::ng-deep .article-editor .ql-editor {
+    min-height: 16rem;
+  }
+
+  .article-preview__header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .form-actions {
+    flex-wrap: wrap;
+    margin-top: 1.8rem;
+  }
+
+  .form-actions button {
+    flex: 1 1 100%;
+  }
+}

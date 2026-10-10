@@ -1,0 +1,63 @@
+:host {
+  display: block;
+}
+
+.pagination {
+  align-items: center;
+  color: #7d8797;
+  display: flex;
+  font-size: 0.92rem;
+  gap: 1rem;
+  justify-content: space-between;
+  min-height: 4.5rem;
+  padding: 1rem 1.75rem;
+}
+
+.pagination__controls {
+  display: flex;
+  gap: 0.45rem;
+}
+
+button {
+  background: #fff;
+  border: 1px solid #d5dbe4;
+  border-radius: 0.55rem;
+  color: #758093;
+  cursor: pointer;
+  font: inherit;
+  min-height: 2.25rem;
+  padding: 0 0.75rem;
+}
+
+button:hover:not(:disabled) {
+  border-color: var(--waai-primary);
+  color: var(--waai-primary);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+button.is-current {
+  background: var(--waai-primary);
+  border-color: var(--waai-primary);
+  color: #fff;
+}
+
+@media (max-width: 900px) {
+  .pagination {
+    flex-direction: column;
+    padding: 2rem 0 0;
+  }
+}
+
+@media (max-width: 420px) {
+  .pagination__controls {
+    gap: 0.3rem;
+  }
+
+  button {
+    padding: 0 0.55rem;
+  }
+}

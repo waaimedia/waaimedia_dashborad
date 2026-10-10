@@ -1,0 +1,44 @@
+<section class="counters-page d-flex justify-content-center align-items-center flex-lg-row flex-column">
+  <div class="mobile-heading">
+    <h2>Manage Counters</h2>
+    <p>Update the numeric counters displayed on your website homepage</p>
+  </div>
+
+  <div class="counters-grid">
+    @for (counter of counters(); track counter.key) {
+      <article class="counter-card" [class.counter-card--editing]="editingKey() === counter.key">
+        <div class="counter-card__header">
+          <span>{{ counter.label }}</span>
+          @if (editingKey() === counter.key) {
+            <button type="button" class="confirm" (click)="finishEditing()" aria-label="Finish editing"><i class="bi bi-check-lg"></i></button>
+          } @else {
+            <button type="button" (click)="startEditing(counter.key)" [attr.aria-label]="'Edit ' + counter.label"><i class="bi bi-pencil-square"></i></button>
+          }
+        </div>
+
+        @if (editingKey() === counter.key) {
+          <input
+            #counterInput
+            type="number"
+            min="0"
+            inputmode="numeric"
+            [value]="values()[counter.key]"
+            (input)="setValue(counter.key, counterInput.value)"
+            (keydown.enter)="finishEditing()"
+            (blur)="finishEditing()"
+            aria-label="Counter value"
+            autofocus
+          />
+        } @else {
+          <strong>{{ values()[counter.key] | number }}</strong>
+        }
+      </article>
+    }
+
+    <div class="save-area">
+      <button type="button" [disabled]="!hasChanges()" (click)="saveAll()">
+        <i class="bi bi-floppy-fill"></i> Save All Changes
+      </button>
+    </div>
+  </div>
+</section>

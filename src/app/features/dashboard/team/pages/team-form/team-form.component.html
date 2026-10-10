@@ -1,0 +1,39 @@
+<section class="team-form-page">
+  <div class="mobile-form-heading">
+    <h2>{{ isEditMode() ? 'Update Team Member' : 'Add Team Member' }}</h2>
+    <p>{{ isEditMode() ? 'Update this team member' : 'Create a new member' }}</p>
+  </div>
+
+  <form class="team-form" [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <div class="photo-upload">
+      <label class="photo-control" for="member-photo">
+        <input id="member-photo" type="file" accept="image/png,image/jpeg,image/webp" (change)="selectPhoto($event)" />
+        @if (photoPreview()) {
+          <img [src]="photoPreview()" alt="Selected profile" />
+        } @else {
+          <i class="bi bi-camera-fill"></i>
+          <span>Upload Photo</span>
+        }
+        <b><i class="bi bi-plus-lg"></i></b>
+      </label>
+      <p>Upload a profile photo <span>(optional)</span></p>
+    </div>
+
+    <div class="field">
+      <label for="full-name">Full Name *</label>
+      <input id="full-name" type="text" formControlName="fullName" placeholder="Enter full name" />
+      @if (form.controls.fullName.invalid && form.controls.fullName.touched) { <small>Full name is required.</small> }
+    </div>
+
+    <div class="field">
+      <label for="role">Position / Role *</label>
+      <input id="role" type="text" formControlName="role" placeholder="e.g. UX/UI Designer, Product Manager" />
+      @if (form.controls.role.invalid && form.controls.role.touched) { <small>Position or role is required.</small> }
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="save"><i class="bi bi-plus-lg"></i> {{ isEditMode() ? 'Update member' : 'Save member' }}</button>
+      <button type="button" class="cancel" (click)="cancel()"><i class="bi bi-x-lg"></i> Cancel</button>
+    </div>
+  </form>
+</section>

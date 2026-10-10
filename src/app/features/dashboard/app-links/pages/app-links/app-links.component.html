@@ -1,0 +1,42 @@
+<section class="app-links-page">
+  <form class="app-links-form" [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <header>
+      <h2>Mobile App Download Links</h2>
+      <p>Configure the download links for your mobile applications across different platforms.</p>
+    </header>
+
+    <div class="fields">
+      <label class="field">
+        <span><i class="bi bi-google-play google-play"></i> Google Play Store Link</span>
+        <input type="url" formControlName="googlePlay" placeholder="https://play.google.com/store/apps/details?id=com.yourcompany.app" />
+        @if (form.controls.googlePlay.invalid && form.controls.googlePlay.touched) { <small>Enter a valid Google Play URL.</small> }
+      </label>
+
+      <label class="field">
+        <span><i class="bi bi-apple apple"></i> Apple App Store Link</span>
+        <input type="url" formControlName="appleAppStore" placeholder="https://apps.apple.com/app/your-app/id123456789" />
+        @if (form.controls.appleAppStore.invalid && form.controls.appleAppStore.touched) { <small>Enter a valid App Store URL.</small> }
+      </label>
+
+      <label class="field">
+        <span><i class="bi bi-phone other-platform"></i> App Gallery / Other Platform <em>(optional)</em></span>
+        <input type="url" formControlName="otherPlatform" placeholder="https://appgallery.huawei.com/app/..." />
+        @if (form.controls.otherPlatform.invalid && form.controls.otherPlatform.touched) { <small>Enter a valid URL.</small> }
+      </label>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="save"><i class="bi bi-floppy-fill"></i> Save Changes</button>
+      <button type="button" class="cancel" (click)="cancel()">Cancel</button>
+    </div>
+  </form>
+
+  <aside class="tips" aria-label="Tips for app links">
+    <div><i class="bi bi-info-circle-fill"></i><strong>Tips for App Links</strong></div>
+    <ul>
+      <li>Ensure all links are publicly accessible and lead to your app's store page</li>
+      <li>Test links regularly to ensure they remain active</li>
+      <li>The “Other Platform” field can be used for Huawei AppGallery, Samsung Galaxy Store, or other app stores</li>
+    </ul>
+  </aside>
+</section>

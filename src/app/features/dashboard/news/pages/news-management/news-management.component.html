@@ -1,0 +1,73 @@
+<section class="news-page">
+  <div class="news-heading">
+    <h2>News Management</h2>
+    <button class="add-news" type="button" (click)="addNews()"><i class="bi bi-plus-lg"></i> Add News</button>
+  </div>
+
+  <article class="articles-panel">
+    <div class="panel-toolbar">
+      <h3>Recent Articles</h3>
+      <div class="filters">
+        <label class="search-field">
+          <i class="bi bi-search"></i>
+          <input
+            type="search"
+            placeholder="Search articles..."
+            [value]="query()"
+            (input)="setQuery($any($event.target).value)"
+            aria-label="Search articles"
+          />
+        </label>
+        <p-select
+          [options]="statusOptions"
+          optionLabel="label"
+          optionValue="value"
+          [ngModel]="status()"
+          (ngModelChange)="setStatus($event)"
+          ariaLabel="Filter by status"
+          styleClass="status-select"
+        />
+      </div>
+    </div>
+
+    <div class="articles-table">
+      <div class="table-head">
+        <span>Title</span>
+        <span>Category</span>
+        <span>Status</span>
+        <span>Actions</span>
+      </div>
+
+      @for (article of paginatedArticles(); track article.id) {
+        <article class="article-row">
+          <div class="article-title">
+            <span class="article-icon"><i class="bi bi-newspaper"></i></span>
+            <div>
+              <strong>{{ article.title }}</strong>
+              <span>{{ article.excerpt }}</span>
+            </div>
+          </div>
+          <span class="article-category">{{ article.category }}</span>
+          <span class="status" [class.status--draft]="article.status === 'Draft'">{{ article.status }}</span>
+          <div class="actions">
+            <a [routerLink]="['/dashboard/news', article.id, 'edit']" [attr.aria-label]="'Edit ' + article.title">
+              <i class="bi bi-pencil-square"></i>
+            </a>
+            <button type="button" class="delete" [attr.aria-label]="'Delete ' + article.title" (click)="deleteArticle(article)">
+              <i class="bi bi-trash3-fill"></i>
+            </button>
+          </div>
+        </article>
+      } @empty {
+        <p class="empty-state">No articles match your filters.</p>
+      }
+    </div>
+
+    <app-pagination
+      [page]="page()"
+      [pageSize]="pageSize"
+      [totalRecords]="filteredArticles().length"
+      (pageChange)="changePage($event)"
+    />
+  </article>
+</section>

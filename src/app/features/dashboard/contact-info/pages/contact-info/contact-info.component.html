@@ -1,0 +1,89 @@
+<section class="contact-page">
+  <header class="mobile-heading">
+    <h2>Contact Info</h2>
+    <p>Manage your website's contact details and location</p>
+  </header>
+
+  <form class="contact-form" [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <section class="contact-section">
+      <div class="section-intro">
+        <h3><i class="bi bi-telephone-fill phone-icon"></i>Phone Numbers</h3>
+        <p>Add multiple phone numbers for different purposes</p>
+      </div>
+      <div class="section-fields phone-fields">
+        <label class="field">
+          <span>Phone 1 <em>(Primary)</em></span>
+          <input type="tel" formControlName="phonePrimary" placeholder="+20 10 24940180" />
+        </label>
+        <label class="field">
+          <span>Phone 2 <em>(Secondary)</em></span>
+          <input type="tel" formControlName="phoneSecondary" placeholder="+20 10 03450774" />
+        </label>
+        <label class="field">
+          <span>Phone 3 <em>(Third)</em></span>
+          <input type="tel" formControlName="phoneThird" placeholder="+20 10 29105073" />
+        </label>
+      </div>
+    </section>
+
+    <section class="contact-section">
+      <div class="section-intro">
+        <h3><i class="bi bi-envelope-fill email-icon"></i>Email Addresses</h3>
+        <p>Official and general contact emails</p>
+      </div>
+      <div class="section-fields email-fields">
+        <label class="field">
+          <span>Official Email</span>
+          <input type="email" formControlName="officialEmail" placeholder="company@gmail.com" />
+          @if (form.controls.officialEmail.invalid && form.controls.officialEmail.touched) { <small>Enter a valid email address.</small> }
+        </label>
+      </div>
+    </section>
+
+    <section class="contact-section">
+      <div class="section-intro">
+        <h3><i class="bi bi-share-fill social-icon"></i>Social Media Links</h3>
+        <p>Connect your social media profiles</p>
+      </div>
+      <div class="section-fields social-fields">
+        <label class="field"><span><i class="bi bi-facebook facebook"></i>Facebook</span><input type="url" formControlName="facebook" placeholder="https://facebook.com/company" /></label>
+        <label class="field"><span><i class="bi bi-instagram instagram"></i>Instagram</span><input type="url" formControlName="instagram" placeholder="https://instagram.com/company" /></label>
+        <label class="field"><span><i class="bi bi-youtube youtube"></i>Youtube</span><input type="url" formControlName="youtube" placeholder="https://youtube.com/company" /></label>
+        <label class="field"><span><i class="bi bi-linkedin linkedin"></i>LinkedIn</span><input type="url" formControlName="linkedin" placeholder="https://linkedin.com/company" /></label>
+        <label class="field"><span><i class="bi bi-tiktok tiktok"></i>Tiktok</span><input type="url" formControlName="tiktok" placeholder="https://tiktok.com/company" /></label>
+        <label class="field"><span><i class="bi bi-whatsapp whatsapp"></i>Whatsapp</span><input type="url" formControlName="whatsapp" placeholder="https://wa.me/201024940180" /></label>
+      </div>
+    </section>
+
+    <section class="contact-section">
+      <div class="section-intro">
+        <h3><i class="bi bi-geo-alt-fill address-icon"></i><span class="desktop-label">Physical Address</span><span class="mobile-label">Address &amp; Location</span></h3>
+        <p>Your business location</p>
+      </div>
+      <div class="section-fields address-fields">
+        <label class="field">
+          <span>Complete Address</span>
+          <textarea formControlName="address" placeholder="123 Main Street, City, State 12345"></textarea>
+        </label>
+      </div>
+    </section>
+
+    <section class="contact-section">
+      <div class="section-intro">
+        <h3><i class="bi bi-geo-fill map-icon"></i>Map Location</h3>
+        <p>Google Maps share link for your location</p>
+      </div>
+      <div class="section-fields map-fields">
+        <label class="field">
+          <span>Google Maps URL</span>
+          <textarea formControlName="googleMapsUrl" placeholder="https://maps.google.com/... "></textarea>
+        </label>
+      </div>
+    </section>
+
+    <div class="form-actions">
+      <button type="button" class="cancel" (click)="cancel()"><i class="bi bi-x-lg"></i> Cancel</button>
+      <button type="submit" class="save"><i class="bi bi-floppy-fill"></i> Save Changes</button>
+    </div>
+  </form>
+</section>

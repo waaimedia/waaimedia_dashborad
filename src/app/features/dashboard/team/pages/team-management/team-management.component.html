@@ -1,0 +1,49 @@
+<section class="team-page">
+  <div class="team-heading">
+    <h2>Manage Team</h2>
+    <button class="add-member" type="button" (click)="addMember()"><i class="bi bi-plus-lg"></i> Add Team Member</button>
+  </div>
+
+  <article class="team-panel">
+    <h3>Current Team Members</h3>
+    <div class="team-table">
+      <div class="team-table__head">
+        <span>Photo</span>
+        <span>Name</span>
+        <span>Position / Role</span>
+        <span>Actions</span>
+      </div>
+
+      @for (member of paginatedMembers(); track member.id) {
+        <article class="team-row">
+          <div class="member-photo">
+            @if (member.photoUrl) {
+              <img [src]="member.photoUrl" [alt]="member.fullName" />
+            } @else {
+              <i class="bi bi-person-fill" aria-hidden="true"></i>
+            }
+          </div>
+          <strong>{{ member.fullName }}</strong>
+          <span class="member-role">{{ member.role }}</span>
+          <div class="member-actions">
+            <a [routerLink]="['/dashboard/team', member.id, 'edit']" [attr.aria-label]="'Edit ' + member.fullName">
+              <i class="bi bi-pencil-fill"></i>
+            </a>
+            <button type="button" (click)="deleteMember(member)" [attr.aria-label]="'Delete ' + member.fullName">
+              <i class="bi bi-trash3-fill"></i>
+            </button>
+          </div>
+        </article>
+      } @empty {
+        <p class="empty-state">No team members yet.</p>
+      }
+    </div>
+
+    <app-pagination
+      [page]="page()"
+      [pageSize]="pageSize"
+      [totalRecords]="members().length"
+      (pageChange)="changePage($event)"
+    />
+  </article>
+</section>

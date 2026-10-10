@@ -1,0 +1,46 @@
+:host { display: block; }
+.mobile-form-heading { display: none; }
+
+.team-form {
+  background: var(--waai-surface);
+  border: 1px solid #e2e7ee;
+  border-radius: 1rem;
+  box-shadow: 0 0.15rem 0.5rem rgb(16 24 40 / 4%);
+  margin: 1.1rem auto 0;
+  max-width: 52rem;
+  padding: 2.5rem;
+}
+
+.photo-upload { display: grid; justify-items: center; margin-bottom: 2.4rem; }
+.photo-control { align-items: center; background: #f7f8fa; border: 2px dashed #cfd7e2; border-radius: 50%; color: #98a2b3; cursor: pointer; display: flex; flex-direction: column; height: 10rem; justify-content: center; overflow: visible; position: relative; width: 10rem; }
+.photo-control input { display: none; }
+.photo-control img { border-radius: 50%; height: 100%; object-fit: cover; width: 100%; }
+.photo-control > i { font-size: 2rem; }
+.photo-control > span { font-size: 0.95rem; margin-top: 0.35rem; }
+.photo-control b { align-items: center; background: var(--waai-primary); border-radius: 50%; bottom: -0.25rem; color: #fff; display: flex; height: 3rem; justify-content: center; position: absolute; right: -0.25rem; width: 3rem; }
+.photo-upload p { color: #748094; margin: 1rem 0 0; }
+.photo-upload p span { color: #9aa4b2; }
+
+.field { display: grid; gap: 0.6rem; margin-top: 1.65rem; }
+.field label { color: #435064; font-weight: 700; }
+.field input { background: #fff; border: 1px solid #d6dce5; border-radius: var(--waai-radius-sm); color: #344054; font: inherit; height: var(--waai-control-height-lg); outline: none; padding: 0 1rem; width: 100%; }
+.field input:focus { border-color: var(--waai-primary); box-shadow: 0 0 0 0.2rem rgb(231 61 85 / 12%); }
+.field input::placeholder { color: #aab1bf; }
+.field small { color: #d43f51; }
+
+.form-actions { display: grid; gap: 1rem; grid-template-columns: 1fr 1fr; margin-top: 2.5rem; }
+.form-actions button { border: 0; border-radius: var(--waai-radius-sm); cursor: pointer; font: inherit; font-weight: 700; min-height: var(--waai-control-height-lg); }
+.save { background: var(--waai-primary); color: #fff; }
+.save:hover { background: var(--waai-primary-dark); }
+.cancel { background: #f1f3f6; color: #435064; }
+
+@media (max-width: 900px) {
+  .mobile-form-heading { display: block; margin: 0 0.9rem 1.2rem; }
+  .mobile-form-heading h2 { color: #1f2937; font-size: 1.2rem; margin: 0 0 0.3rem; }
+  .mobile-form-heading p { color: #7b8594; margin: 0; }
+  .team-form { margin: 0; padding: 1.5rem; }
+}
+
+@media (max-width: 460px) {
+  .form-actions { grid-template-columns: 1fr; }
+}

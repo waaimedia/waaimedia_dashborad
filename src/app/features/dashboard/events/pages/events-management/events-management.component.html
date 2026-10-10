@@ -1,0 +1,49 @@
+<section class="events-page">
+  <div class="events-heading">
+    <h2>Events Calendar Management</h2>
+    <button class="add-event" type="button" (click)="addEvent()"><i class="bi bi-plus-lg"></i> Add Event</button>
+  </div>
+
+  <article class="events-panel">
+    <div class="panel-toolbar">
+      <h3>Recent Events</h3>
+      <div class="filters">
+        <label class="search-field">
+          <i class="bi bi-search"></i>
+          <input type="search" placeholder="Search events..." [value]="query()" (input)="setQuery($any($event.target).value)" aria-label="Search events" />
+        </label>
+        <p-select [options]="statusOptions" optionLabel="label" optionValue="value" [ngModel]="status()" (ngModelChange)="setStatus($event)" ariaLabel="Filter by status" styleClass="status-select" />
+      </div>
+    </div>
+
+    <div class="events-table">
+      <div class="table-head">
+        <span>Title</span>
+        <span>Date</span>
+        <span>Category</span>
+        <span>Status</span>
+        <span>Actions</span>
+      </div>
+
+      @for (event of paginatedEvents(); track event.id) {
+        <article class="event-row">
+          <div class="event-title">
+            <span class="event-icon"><i class="bi bi-calendar-event"></i></span>
+            <strong>{{ event.title }}</strong>
+          </div>
+          <span class="event-date">{{ event.date | date: 'MMM d, y' }}</span>
+          <span class="event-category">{{ event.category }}</span>
+          <span class="status" [class.status--draft]="event.status === 'Draft'">{{ event.status }}</span>
+          <div class="actions">
+            <a [routerLink]="['/dashboard/events-calendar', event.id, 'edit']" [attr.aria-label]="'Edit ' + event.title"><i class="bi bi-pencil-square"></i></a>
+            <button type="button" class="delete" (click)="deleteEvent(event)" [attr.aria-label]="'Delete ' + event.title"><i class="bi bi-trash3-fill"></i></button>
+          </div>
+        </article>
+      } @empty {
+        <p class="empty-state">No events match your filters.</p>
+      }
+    </div>
+
+    <app-pagination [page]="page()" [pageSize]="pageSize" [totalRecords]="filteredEvents().length" (pageChange)="changePage($event)" />
+  </article>
+</section>
