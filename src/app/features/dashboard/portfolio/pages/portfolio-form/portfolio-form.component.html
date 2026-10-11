@@ -1,0 +1,53 @@
+<section class="portfolio-form-page">
+  <div class="mobile-form-heading">
+    <h2>{{ isEditMode() ? 'Update Portfolio Item' : 'Add Portfolio Item' }}</h2>
+    <p>{{ isEditMode() ? 'Update your project details' : 'Add a project to your portfolio' }}</p>
+  </div>
+
+  <form class="portfolio-form" [formGroup]="form" (ngSubmit)="save('Published')" novalidate>
+    <div class="form-grid">
+      <div class="field">
+        <label for="title">Project Title</label>
+        <input id="title" type="text" formControlName="title" placeholder="Enter project title..." />
+        @if (form.controls.title.invalid && form.controls.title.touched) { <small>Project title is required.</small> }
+      </div>
+
+      <div class="field">
+        <label for="category">Category</label>
+        <p-select inputId="category" [options]="categories" optionLabel="label" optionValue="value" formControlName="category" placeholder="Select category..." styleClass="category-select" />
+        @if (form.controls.category.invalid && form.controls.category.touched) { <small>Choose a category.</small> }
+      </div>
+
+      <div class="field">
+        <label for="link-one">Project Link</label>
+        <input id="link-one" type="url" formControlName="linkOne" placeholder="https://example.com" />
+        @if (form.controls.linkOne.invalid && form.controls.linkOne.touched) { <small>Enter a valid URL.</small> }
+      </div>
+
+      <div class="field">
+        <label for="link-two">Second Link</label>
+        <input id="link-two" type="url" formControlName="linkTwo" placeholder="https://example.com" />
+        @if (form.controls.linkTwo.invalid && form.controls.linkTwo.touched) { <small>Enter a valid URL.</small> }
+      </div>
+    </div>
+
+    <div class="field featured-image">
+      <label for="featured-image">Featured Image</label>
+      <label class="upload-area" for="featured-image">
+        <input id="featured-image" type="file" accept="image/png,image/jpeg" (change)="selectImage($event)" />
+        <i class="bi bi-cloud-arrow-up-fill"></i>
+        @if (imageName()) {
+          <strong>{{ imageName() }}</strong><span>Click to replace image</span>
+        } @else {
+          <strong>Click to upload image</strong><span>PNG, JPG up to 10MB</span>
+        }
+      </label>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="cancel" (click)="cancel()">Cancel</button>
+      <button type="button" class="draft" (click)="save('Draft')">Save as a Draft</button>
+      <button type="submit" class="publish"><i class="bi bi-send-fill"></i> Publish Portfolio Item</button>
+    </div>
+  </form>
+</section>

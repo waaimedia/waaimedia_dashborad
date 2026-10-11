@@ -1,12 +1,14 @@
 :host { display: block; }
+.counters-page { align-items: center; display: flex; justify-content: center; }
 .mobile-heading { display: none; }
 .counters-grid {
   display: grid;
   gap: 1rem;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 25rem), 1fr));
   max-width: 51rem;
+  min-width: 0;
 }
-.counter-card { background: #fff; border: 1px solid #e1e6ed; border-radius: var(--waai-radius-sm); min-height: 5.8rem; padding: 1rem; transition: border-color var(--waai-transition), box-shadow var(--waai-transition); }
+.counter-card { background: #fff; border: 1px solid #e1e6ed; border-radius: var(--waai-radius-sm); min-height: 5.8rem; min-width: 0; padding: 1rem; transition: border-color var(--waai-transition), box-shadow var(--waai-transition); }
 .counter-card--editing { border-color: var(--waai-primary); box-shadow: 0 0 0 0.18rem rgb(231 61 85 / 10%); }
 .counter-card__header { align-items: center; color: #435064; display: flex; font-size: 0.78rem; font-weight: 750; justify-content: space-between; }
 .counter-card__header button { background: transparent; border: 0; color: var(--waai-primary); cursor: pointer; font-size: 0.9rem; padding: 0.2rem; }
@@ -20,10 +22,11 @@
 .save-area button:not(:disabled):hover { background: var(--waai-primary-dark); }
 
 @media (max-width: 900px) {
+  .counters-page { align-items: stretch; flex-direction: column; width: 100%; }
   .mobile-heading { display: block; margin: 0 0.9rem 1.2rem; }
   .mobile-heading h2 { color: #1f2937; font-size: 1.2rem; margin: 0 0 0.3rem; }
   .mobile-heading p { color: #7b8594; font-size: 0.9rem; margin: 0; }
-  .counters-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: none; padding: 0 0.25rem; }
+  .counters-grid { grid-template-columns: minmax(0, 1fr); max-width: none; padding: 0 0.25rem; width: 100%; }
+  .save-area, .save-area button { width: 100%; }
+  .save-area button { justify-content: center; }
 }
-
-@media (max-width: 440px) { .counters-grid { grid-template-columns: 1fr; } }

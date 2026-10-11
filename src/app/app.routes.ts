@@ -160,6 +160,28 @@ export const routes: Routes = [
             (m) => m.NewsManagementComponent,
           ),
       },
+      {
+        path: 'portfolio/new',
+        loadComponent: () =>
+          import('./features/dashboard/portfolio/pages/portfolio-form/portfolio-form.component').then(
+            (m) => m.PortfolioFormComponent,
+          ),
+      },
+      {
+        path: 'portfolio/:id/edit',
+        loadComponent: () =>
+          import('./features/dashboard/portfolio/pages/portfolio-form/portfolio-form.component').then(
+            (m) => m.PortfolioFormComponent,
+          ),
+      },
+      {
+        path: 'portfolio',
+        pathMatch: 'full',
+        loadComponent: () =>
+          import('./features/dashboard/portfolio/pages/portfolio-management/portfolio-management.component').then(
+            (m) => m.PortfolioManagementComponent,
+          ),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'news' },
     ],
   },

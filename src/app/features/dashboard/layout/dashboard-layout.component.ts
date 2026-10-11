@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ConfirmationService } from 'primeng/api';
 import { AuthService } from '../../../core/auth/auth.service';
 import { DashboardHeaderService } from './dashboard-header.service';
 
@@ -18,6 +19,7 @@ interface NavigationItem {
 export class DashboardLayoutComponent {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly confirmation = inject(ConfirmationService);
   protected readonly header = inject(DashboardHeaderService).header;
 
   protected readonly sidebarOpen = signal(false);
@@ -25,7 +27,7 @@ export class DashboardLayoutComponent {
     { icon: 'bi-newspaper', label: 'News', route: '/dashboard/news' },
     { icon: 'bi-people', label: 'Team', route: '/dashboard/team' },
     { icon: 'bi-123', label: 'Counters', route: '/dashboard/counters' },
-    { icon: 'bi-briefcase', label: 'Portfolio' },
+    { icon: 'bi-briefcase', label: 'Portfolio', route: '/dashboard/portfolio' },
     { icon: 'bi-person-workspace', label: 'Clients', route: '/dashboard/clients' },
     { icon: 'bi-calendar3', label: 'Events Calendar', route: '/dashboard/events-calendar' },
     { icon: 'bi-layout-text-sidebar-reverse', label: 'Blogs', route: '/dashboard/blogs' },
@@ -43,7 +45,19 @@ export class DashboardLayoutComponent {
     this.sidebarOpen.set(false);
   }
 
-  protected logout(): void {
+  protected confirmLogout(): void {
+    this.confirmation.confirm({
+      header: 'Log out?',
+      message: 'Are you sure you want to log out of your account?',
+      icon: 'bi bi-box-arrow-right',
+      acceptLabel: 'Log out',
+      rejectLabel: 'Cancel',
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => this.logout(),
+    });
+  }
+
+  private logout(): void {
     this.auth.clearSession();
     this.router.navigateByUrl('/auth/login');
   }

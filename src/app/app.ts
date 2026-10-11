@@ -7,6 +7,17 @@ import { Toast } from 'primeng/toast';
   imports: [RouterOutlet, Toast, ConfirmDialog],
   selector: 'app-root',
   styleUrl: './app.scss',
-  template: '<p-toast position="top-right" /><p-confirmDialog /><router-outlet />',
+  template: `
+    <p-toast position="top-right" [breakpoints]="toastBreakpoints" />
+    <p-confirmDialog [breakpoints]="confirmDialogBreakpoints" />
+    <router-outlet />
+  `,
 })
-export class App {}
+export class App {
+  protected readonly toastBreakpoints = {
+    '640px': { width: 'calc(100vw - 1.5rem)', right: '0.75rem', left: '0.75rem' },
+  };
+  protected readonly confirmDialogBreakpoints = {
+    '640px': 'calc(100vw - 1.5rem)',
+  };
+}

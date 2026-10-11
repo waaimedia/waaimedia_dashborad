@@ -30,6 +30,21 @@ export class DashboardHeaderService {
     });
   }
 
+  showPortfolioList(): void {
+    this.header.set({
+      title: 'Portfolio Management',
+      subtitle: 'Manage your portfolio projects and publications',
+      action: { label: 'Add Portfolio Item', route: '/dashboard/portfolio/new' },
+    });
+  }
+
+  showPortfolioForm(editing: boolean): void {
+    this.header.set({
+      title: editing ? 'Update Portfolio Item' : 'Add Portfolio Item',
+      subtitle: editing ? 'Update your project details' : 'Add a project to your portfolio',
+    });
+  }
+
   showTeamList(): void {
     this.header.set({
       title: 'Manage Team',

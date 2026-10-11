@@ -16,6 +16,32 @@ body {
   margin: 0;
 }
 
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+@media (max-width: 640px) {
+  .p-toast-message-content {
+    align-items: flex-start;
+  }
+
+  .p-toast-summary,
+  .p-toast-detail {
+    overflow-wrap: anywhere;
+  }
+
+  .p-confirmdialog .p-dialog-footer {
+    flex-wrap: wrap;
+  }
+
+  .p-confirmdialog .p-dialog-footer .p-button {
+    flex: 1 1 8rem;
+  }
+}
+
 *,
 *::before,
 *::after {

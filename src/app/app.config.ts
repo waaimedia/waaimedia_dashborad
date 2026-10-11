@@ -28,6 +28,8 @@ import { UserMockRepository } from './features/dashboard/users/data-access/user-
 import { USER_REPOSITORY } from './features/dashboard/users/data-access/user.repository';
 import { BackgroundMusicMockRepository } from './features/dashboard/background-music/data-access/background-music-mock.repository';
 import { BACKGROUND_MUSIC_REPOSITORY } from './features/dashboard/background-music/data-access/background-music.repository';
+import { PortfolioMockRepository } from './features/dashboard/portfolio/data-access/portfolio-mock.repository';
+import { PORTFOLIO_REPOSITORY } from './features/dashboard/portfolio/data-access/portfolio.repository';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -56,6 +58,8 @@ export const appConfig: ApplicationConfig = {
     { provide: USER_REPOSITORY, useExisting: UserMockRepository },
     // Replace BackgroundMusicMockRepository with the API implementation when endpoints are ready.
     { provide: BACKGROUND_MUSIC_REPOSITORY, useExisting: BackgroundMusicMockRepository },
+    // Replace PortfolioMockRepository with the API implementation when endpoints are ready.
+    { provide: PORTFOLIO_REPOSITORY, useExisting: PortfolioMockRepository },
     provideRouter(routes),
     providePrimeNG({
       theme: {

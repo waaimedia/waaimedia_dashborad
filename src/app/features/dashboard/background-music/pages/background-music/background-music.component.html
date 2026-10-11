@@ -1,20 +1,65 @@
 <section class="music-page">
   <form class="music-form" [formGroup]="form" (ngSubmit)="save()" novalidate>
-    <header><span class="music-icon"><i class="bi bi-music-note-beamed"></i></span><div><h2>Website Background Music</h2><p>Upload and configure music that can play in the background of your website.</p></div></header>
+    <header>
+      <span class="music-icon"><i class="bi bi-music-note-beamed"></i></span>
+      <div>
+        <h2>Website Background Music</h2>
+        <p>Upload and configure music that can play in the background of your website.</p>
+      </div>
+    </header>
     <label class="upload-area" for="background-audio">
-      <input id="background-audio" type="file" accept="audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/x-m4a" (change)="selectAudio($event)" />
+      <input
+        id="background-audio"
+        type="file"
+        accept="audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/x-m4a"
+        (change)="selectAudio($event)"
+      />
       <i class="bi bi-cloud-arrow-up-fill"></i>
-      @if (fileName()) { <strong>{{ fileName() }}</strong><span>Click to replace audio</span> } @else { <strong>Click to upload music</strong><span>MP3, WAV, OGG, or M4A up to 15MB</span> }
+      @if (fileName()) {
+        <strong>{{ fileName() }}</strong
+        ><span>Click to replace audio</span>
+      } @else {
+        <strong>Click to upload music</strong><span>MP3, WAV, OGG, or M4A up to 15MB</span>
+      }
     </label>
     @if (sourceUrl()) {
-      <section class="audio-preview"><div><i class="bi bi-soundwave"></i><span>Audio Preview</span></div><audio controls [src]="sourceUrl()" [loop]="form.controls.loop.value" [volume]="form.controls.volume.value / 100"></audio><button type="button" (click)="removeAudio()"><i class="bi bi-trash3"></i> Remove</button></section>
+      <section class="audio-preview">
+        <div><i class="bi bi-soundwave"></i><span>Audio Preview</span></div>
+        <audio
+          controls
+          [src]="sourceUrl()"
+          [loop]="form.controls.loop.value"
+          [volume]="form.controls.volume.value / 100"
+        ></audio
+        ><button type="button" (click)="removeAudio()"><i class="bi bi-trash3"></i> Remove</button>
+      </section>
     }
     <section class="settings">
-      <label class="toggle-row"><span><strong>Enable background music</strong><small>Allow this track to play on the website.</small></span><input type="checkbox" formControlName="enabled" /><i aria-hidden="true"></i></label>
-      <label class="toggle-row"><span><strong>Loop music</strong><small>Restart the track automatically when it finishes.</small></span><input type="checkbox" formControlName="loop" /><i aria-hidden="true"></i></label>
-      <label class="volume-row"><span><strong>Volume</strong><small>{{ form.controls.volume.value }}%</small></span><input type="range" min="0" max="100" step="1" formControlName="volume" /></label>
+      <label class="toggle-row"
+        ><span
+          ><strong>Enable background music</strong
+          ><small>Allow this track to play on the website.</small></span
+        ><input type="checkbox" formControlName="enabled" /><i aria-hidden="true"></i
+      ></label>
+      <label class="toggle-row"
+        ><span
+          ><strong>Loop music</strong
+          ><small>Restart the track automatically when it finishes.</small></span
+        ><input type="checkbox" formControlName="loop" /><i aria-hidden="true"></i
+      ></label>
     </section>
-    <aside class="notice"><i class="bi bi-info-circle-fill"></i><p>Most browsers only allow background audio to start after a visitor interacts with the website. The public website should handle that interaction before playing this track.</p></aside>
-    <div class="form-actions"><button type="button" class="cancel" (click)="cancel()">Cancel</button><button type="submit" class="save"><i class="bi bi-floppy-fill"></i> Save Music Settings</button></div>
+    <aside class="notice">
+      <i class="bi bi-info-circle-fill"></i>
+      <p>
+        Most browsers only allow background audio to start after a visitor interacts with the
+        website. The public website should handle that interaction before playing this track.
+      </p>
+    </aside>
+    <div class="form-actions">
+      <button type="button" class="cancel" (click)="cancel()">Cancel</button
+      ><button type="submit" class="save">
+        <i class="bi bi-floppy-fill"></i> Save Music Settings
+      </button>
+    </div>
   </form>
 </section>
