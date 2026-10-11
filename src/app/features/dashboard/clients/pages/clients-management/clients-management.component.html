@@ -27,9 +27,11 @@
             <a [routerLink]="['/dashboard/clients', client.id, 'edit']" [attr.aria-label]="'Edit ' + client.fullName">
               <i class="bi bi-pencil-fill"></i>
             </a>
-            <button type="button" (click)="deleteClient(client)" [attr.aria-label]="'Delete ' + client.fullName">
-              <i class="bi bi-trash3-fill"></i>
-            </button>
+            @if (canDelete()) {
+              <button type="button" (click)="deleteClient(client)" [attr.aria-label]="'Delete ' + client.fullName">
+                <i class="bi bi-trash3-fill"></i>
+              </button>
+            }
           </div>
         </article>
       } @empty {

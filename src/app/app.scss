@@ -1,0 +1,39 @@
+.app-loader {
+  position: fixed;
+  z-index: 2000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgb(25 25 29 / 18%);
+  backdrop-filter: blur(2px);
+}
+
+.app-loader__card {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 8.75rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid rgb(255 255 255 / 80%);
+  border-radius: var(--waai-radius-md);
+  background: rgb(255 255 255 / 96%);
+  box-shadow: 0 0.75rem 2rem rgb(25 25 29 / 16%);
+  color: var(--waai-text);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.app-loader__spinner {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 3px solid var(--waai-primary-pale);
+  border-top-color: var(--waai-primary);
+  border-radius: 50%;
+  animation: waai-loader-spin 700ms linear infinite;
+}
+
+@keyframes waai-loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

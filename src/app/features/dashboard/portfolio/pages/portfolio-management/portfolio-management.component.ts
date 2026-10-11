@@ -7,6 +7,7 @@ import { PaginationComponent } from '../../../../../shared/ui/pagination/paginat
 import { DashboardHeaderService } from '../../../layout/dashboard-header.service';
 import { PortfolioFacade } from '../../data-access/portfolio.facade';
 import { PortfolioItem, PortfolioStatus } from '../../data-access/portfolio.model';
+import { AuthService } from '../../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-portfolio-management',
@@ -20,6 +21,7 @@ export class PortfolioManagementComponent implements OnInit {
   private readonly header = inject(DashboardHeaderService);
   private readonly router = inject(Router);
   private readonly facade = inject(PortfolioFacade);
+  private readonly auth = inject(AuthService);
 
   protected readonly query = signal('');
   protected readonly status = signal<'All' | PortfolioStatus>('All');
@@ -31,6 +33,7 @@ export class PortfolioManagementComponent implements OnInit {
     { label: 'Draft', value: 'Draft' },
   ];
   protected readonly items = this.facade.items;
+  protected readonly canDelete = () => this.auth.hasRole('admin');
   protected readonly filteredItems = computed(() => {
     const query = this.query().trim().toLowerCase();
     const status = this.status();
@@ -67,6 +70,7 @@ export class PortfolioManagementComponent implements OnInit {
   }
 
   protected deleteItem(item: PortfolioItem): void {
+    if (!this.auth.hasRole('admin')) return;
     this.confirmation.confirm({
       header: 'Delete portfolio item?',
       message: `“${item.title}” will be permanently deleted.`,

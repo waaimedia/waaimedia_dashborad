@@ -5,6 +5,7 @@ import { PaginationComponent } from '../../../../../shared/ui/pagination/paginat
 import { DashboardHeaderService } from '../../../layout/dashboard-header.service';
 import { TeamFacade } from '../../data-access/team.facade';
 import { TeamMember } from '../../data-access/team.model';
+import { AuthService } from '../../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-team-management',
@@ -18,10 +19,12 @@ export class TeamManagementComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly confirmation = inject(ConfirmationService);
   private readonly messages = inject(MessageService);
+  private readonly auth = inject(AuthService);
 
   protected readonly page = signal(1);
   protected readonly pageSize = 4;
   protected readonly members = this.facade.members;
+  protected readonly canDelete = () => this.auth.hasRole('admin');
   protected readonly paginatedMembers = computed(() => {
     const start = (this.page() - 1) * this.pageSize;
     return this.members().slice(start, start + this.pageSize);
@@ -41,6 +44,7 @@ export class TeamManagementComponent implements OnInit {
   }
 
   protected deleteMember(member: TeamMember): void {
+    if (!this.auth.hasRole('admin')) return;
     this.confirmation.confirm({
       header: 'Delete team member?',
       message: `“${member.fullName}” will be permanently removed from the team.`,

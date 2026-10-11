@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { finalize } from 'rxjs';
 import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
@@ -18,6 +19,7 @@ export class LoginComponent {
   private readonly messages = inject(MessageService);
 
   protected readonly showPassword = signal(false);
+  protected readonly submitting = signal(false);
   protected readonly loginForm = this.formBuilder.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
@@ -30,15 +32,22 @@ export class LoginComponent {
       return;
     }
 
-    const { email, remember } = this.loginForm.getRawValue();
-    this.auth.startLocalSession(email, remember);
-    this.messages.add({
-      severity: 'success',
-      summary: 'Welcome back',
-      detail: 'You have successfully signed in.',
-      life: 3500,
-    });
-    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-    this.router.navigateByUrl(returnUrl?.startsWith('/') ? returnUrl : '/dashboard');
+    const { email, password, remember } = this.loginForm.getRawValue();
+    this.submitting.set(true);
+    this.auth
+      .login(email, password, remember)
+      .pipe(finalize(() => this.submitting.set(false)))
+      .subscribe({
+        next: (response) => {
+          this.messages.add({
+            severity: 'success',
+            summary: 'Welcome back',
+            detail: response.message,
+            life: 3500,
+          });
+          const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+          void this.router.navigateByUrl(returnUrl?.startsWith('/') ? returnUrl : '/dashboard');
+        },
+      });
   }
 }

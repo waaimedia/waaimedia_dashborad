@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/auth/auth.guard';
+import { authGuard, roleGuard } from './core/auth/auth.guard';
 
 export const routes: Routes = [
   {
@@ -49,19 +49,27 @@ export const routes: Routes = [
       },
       {
         path: 'users/new',
+        canActivate: [roleGuard],
+        data: { roles: ['admin'] },
         loadComponent: () => import('./features/dashboard/users/pages/user-form/user-form.component').then((m) => m.UserFormComponent),
       },
       {
         path: 'users/:id/edit',
+        canActivate: [roleGuard],
+        data: { roles: ['admin'] },
         loadComponent: () => import('./features/dashboard/users/pages/user-form/user-form.component').then((m) => m.UserFormComponent),
       },
       {
         path: 'users/:id/change-password',
+        canActivate: [roleGuard],
+        data: { roles: ['admin'] },
         loadComponent: () => import('./features/dashboard/users/pages/user-password/user-password.component').then((m) => m.UserPasswordComponent),
       },
       {
         path: 'users',
         pathMatch: 'full',
+        canActivate: [roleGuard],
+        data: { roles: ['admin'] },
         loadComponent: () => import('./features/dashboard/users/pages/users-management/users-management.component').then((m) => m.UsersManagementComponent),
       },
       {

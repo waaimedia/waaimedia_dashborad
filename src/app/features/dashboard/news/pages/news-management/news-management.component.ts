@@ -7,6 +7,7 @@ import { DashboardHeaderService } from '../../../layout/dashboard-header.service
 import { NewsFacade } from '../../data-access/news.facade';
 import { ArticleStatus, NewsArticle } from '../../data-access/news.model';
 import { PaginationComponent } from '../../../../../shared/ui/pagination/pagination.component';
+import { AuthService } from '../../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-news-management',
@@ -20,6 +21,7 @@ export class NewsManagementComponent implements OnInit {
   private readonly header = inject(DashboardHeaderService);
   private readonly router = inject(Router);
   private readonly facade = inject(NewsFacade);
+  private readonly auth = inject(AuthService);
 
   protected readonly query = signal('');
   protected readonly status = signal<'All' | ArticleStatus>('All');
@@ -31,6 +33,7 @@ export class NewsManagementComponent implements OnInit {
     { label: 'Draft', value: 'Draft' },
   ];
   protected readonly articles = this.facade.articles;
+  protected readonly canDelete = () => this.auth.hasRole('admin');
 
   protected readonly filteredArticles = computed(() => {
     const query = this.query().trim().toLowerCase();
@@ -71,6 +74,7 @@ export class NewsManagementComponent implements OnInit {
   }
 
   protected deleteArticle(article: NewsArticle): void {
+    if (!this.auth.hasRole('admin')) return;
     this.confirmation.confirm({
       header: 'Delete news article?',
       message: `“${article.title}” will be permanently deleted.`,

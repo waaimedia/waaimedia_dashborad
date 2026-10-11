@@ -7,6 +7,7 @@ import { PaginationComponent } from '../../../../../shared/ui/pagination/paginat
 import { DashboardHeaderService } from '../../../layout/dashboard-header.service';
 import { BlogFacade } from '../../data-access/blog.facade';
 import { BlogPost, BlogStatus } from '../../data-access/blog.model';
+import { AuthService } from '../../../../../core/auth/auth.service';
 
 @Component({ selector: 'app-blogs-management', imports: [FormsModule, RouterLink, Select, PaginationComponent], templateUrl: './blogs-management.component.html', styleUrl: './blogs-management.component.scss' })
 export class BlogsManagementComponent implements OnInit {
@@ -15,12 +16,14 @@ export class BlogsManagementComponent implements OnInit {
   private readonly header = inject(DashboardHeaderService);
   private readonly router = inject(Router);
   private readonly facade = inject(BlogFacade);
+  private readonly auth = inject(AuthService);
   protected readonly query = signal('');
   protected readonly status = signal<'All' | BlogStatus>('All');
   protected readonly page = signal(1);
   protected readonly pageSize = 10;
   protected readonly statusOptions = [{ label: 'All Status', value: 'All' }, { label: 'Published', value: 'Published' }, { label: 'Draft', value: 'Draft' }];
   protected readonly posts = this.facade.posts;
+  protected readonly canDelete = () => this.auth.hasRole('admin');
   protected readonly filteredPosts = computed(() => {
     const query = this.query().trim().toLowerCase(); const status = this.status();
     return this.posts().filter((post) => (!query || post.title.toLowerCase().includes(query)) && (status === 'All' || post.status === status));
@@ -32,6 +35,7 @@ export class BlogsManagementComponent implements OnInit {
   protected setStatus(status: 'All' | BlogStatus): void { this.status.set(status); this.page.set(1); }
   protected changePage(page: number): void { this.page.set(page); }
   protected deletePost(post: BlogPost): void {
+    if (!this.auth.hasRole('admin')) return;
     this.confirmation.confirm({ header: 'Delete blog post?', message: `“${post.title}” will be permanently deleted.`, acceptLabel: 'Delete', rejectLabel: 'Cancel', acceptButtonStyleClass: 'p-button-danger', accept: () => this.facade.remove(post.id).subscribe({ next: () => { this.page.set(1); this.messages.add({ severity: 'success', summary: 'Blog post deleted', detail: 'The blog post has been deleted successfully.', life: 3500 }); } }) });
   }
 }

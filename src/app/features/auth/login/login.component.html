@@ -55,14 +55,13 @@
         }
 
         <div class="login-options">
-          <label class="remember-me" for="remember">
-            <input id="remember" type="checkbox" formControlName="remember" />
-            <span>Remember me for 30 days</span>
-          </label>
+         
           <a routerLink="/auth/forgot-password">Forgot password?</a>
         </div>
 
-        <button class="login-button" type="submit">Login</button>
+        <button class="login-button" type="submit" [disabled]="submitting()">
+          {{ submitting() ? 'Logging in…' : 'Login' }}
+        </button>
       </form>
     </div>
   </section>

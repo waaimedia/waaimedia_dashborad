@@ -1,10 +1,14 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { catchError, throwError } from 'rxjs';
+import { AuthService } from '../auth/auth.service';
 
 export const httpErrorInterceptor: HttpInterceptorFn = (request, next) => {
   const messages = inject(MessageService);
+  const auth = inject(AuthService);
+  const router = inject(Router);
 
   return next(request).pipe(
     catchError((error: unknown) => {
@@ -19,6 +23,13 @@ export const httpErrorInterceptor: HttpInterceptorFn = (request, next) => {
           detail,
           life: 5000,
         });
+
+        if (error.status === 401) {
+          auth.clearSession();
+          if (!router.url.startsWith('/auth/login')) {
+            void router.navigate(['/auth/login'], { queryParams: { session: 'expired' } });
+          }
+        }
       }
 
       return throwError(() => error);

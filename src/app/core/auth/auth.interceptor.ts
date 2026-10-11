@@ -4,12 +4,22 @@ import { environment } from '../../../environments/environment';
 import { AuthService } from './auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (request, next) => {
-  const token = inject(AuthService).getAccessToken();
+  const auth = inject(AuthService);
   const isApiRequest = request.url.startsWith(environment.apiUrl);
 
-  if (!token || !isApiRequest) {
+  if (!isApiRequest) {
     return next(request);
   }
 
-  return next(request.clone({ setHeaders: { Authorization: `Bearer ${token}` } }));
+  const headers: Record<string, string> = { Accept: 'application/json' };
+  const token = auth.getAccessToken();
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  if (request.body !== null && !(request.body instanceof FormData) && !request.headers.has('Content-Type')) {
+    headers['Content-Type'] = 'application/json';
+  }
+
+  return next(request.clone({ setHeaders: headers }));
 };

@@ -8,6 +8,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/auth/auth.interceptor';
 import { httpErrorInterceptor } from './core/http/http-error.interceptor';
+import { loadingInterceptor } from './core/http/loading.interceptor';
 import { NewsMockRepository } from './features/dashboard/news/data-access/news-mock.repository';
 import { NEWS_REPOSITORY } from './features/dashboard/news/data-access/news.repository';
 import { TeamMockRepository } from './features/dashboard/team/data-access/team-mock.repository';
@@ -35,7 +36,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideAnimationsAsync(),
-    provideHttpClient(withInterceptors([authInterceptor, httpErrorInterceptor])),
+    provideHttpClient(withInterceptors([loadingInterceptor, authInterceptor, httpErrorInterceptor])),
     MessageService,
     ConfirmationService,
     // Replace NewsMockRepository with the API implementation when endpoints are ready.

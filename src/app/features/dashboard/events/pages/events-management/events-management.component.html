@@ -36,7 +36,9 @@
           <span class="status" [class.status--draft]="event.status === 'Draft'">{{ event.status }}</span>
           <div class="actions">
             <a [routerLink]="['/dashboard/events-calendar', event.id, 'edit']" [attr.aria-label]="'Edit ' + event.title"><i class="bi bi-pencil-square"></i></a>
-            <button type="button" class="delete" (click)="deleteEvent(event)" [attr.aria-label]="'Delete ' + event.title"><i class="bi bi-trash3-fill"></i></button>
+            @if (canDelete()) {
+              <button type="button" class="delete" (click)="deleteEvent(event)" [attr.aria-label]="'Delete ' + event.title"><i class="bi bi-trash3-fill"></i></button>
+            }
           </div>
         </article>
       } @empty {

@@ -53,9 +53,11 @@
             <a [routerLink]="['/dashboard/news', article.id, 'edit']" [attr.aria-label]="'Edit ' + article.title">
               <i class="bi bi-pencil-square"></i>
             </a>
-            <button type="button" class="delete" [attr.aria-label]="'Delete ' + article.title" (click)="deleteArticle(article)">
-              <i class="bi bi-trash3-fill"></i>
-            </button>
+            @if (canDelete()) {
+              <button type="button" class="delete" [attr.aria-label]="'Delete ' + article.title" (click)="deleteArticle(article)">
+                <i class="bi bi-trash3-fill"></i>
+              </button>
+            }
           </div>
         </article>
       } @empty {

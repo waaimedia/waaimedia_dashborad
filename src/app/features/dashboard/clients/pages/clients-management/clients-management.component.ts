@@ -5,6 +5,7 @@ import { PaginationComponent } from '../../../../../shared/ui/pagination/paginat
 import { DashboardHeaderService } from '../../../layout/dashboard-header.service';
 import { ClientFacade } from '../../data-access/client.facade';
 import { Client } from '../../data-access/client.model';
+import { AuthService } from '../../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-clients-management',
@@ -18,10 +19,12 @@ export class ClientsManagementComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly confirmation = inject(ConfirmationService);
   private readonly messages = inject(MessageService);
+  private readonly auth = inject(AuthService);
 
   protected readonly page = signal(1);
   protected readonly pageSize = 4;
   protected readonly clients = this.facade.clients;
+  protected readonly canDelete = () => this.auth.hasRole('admin');
   protected readonly paginatedClients = computed(() => {
     const start = (this.page() - 1) * this.pageSize;
     return this.clients().slice(start, start + this.pageSize);
@@ -41,6 +44,7 @@ export class ClientsManagementComponent implements OnInit {
   }
 
   protected deleteClient(client: Client): void {
+    if (!this.auth.hasRole('admin')) return;
     this.confirmation.confirm({
       header: 'Delete client?',
       message: `“${client.fullName}” will be permanently removed from your clients.`,

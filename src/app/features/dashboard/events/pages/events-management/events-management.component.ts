@@ -8,6 +8,7 @@ import { PaginationComponent } from '../../../../../shared/ui/pagination/paginat
 import { DashboardHeaderService } from '../../../layout/dashboard-header.service';
 import { EventFacade } from '../../data-access/event.facade';
 import { CalendarEvent, EventStatus } from '../../data-access/event.model';
+import { AuthService } from '../../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-events-management',
@@ -21,6 +22,7 @@ export class EventsManagementComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly confirmation = inject(ConfirmationService);
   private readonly messages = inject(MessageService);
+  private readonly auth = inject(AuthService);
 
   protected readonly query = signal('');
   protected readonly status = signal<'All' | EventStatus>('All');
@@ -32,6 +34,7 @@ export class EventsManagementComponent implements OnInit {
     { label: 'Draft', value: 'Draft' },
   ];
   protected readonly events = this.facade.events;
+  protected readonly canDelete = () => this.auth.hasRole('admin');
   protected readonly filteredEvents = computed(() => {
     const query = this.query().trim().toLowerCase();
     const status = this.status();
@@ -70,6 +73,7 @@ export class EventsManagementComponent implements OnInit {
   }
 
   protected deleteEvent(event: CalendarEvent): void {
+    if (!this.auth.hasRole('admin')) return;
     this.confirmation.confirm({
       header: 'Delete event?',
       message: `“${event.title}” will be permanently deleted.`,
