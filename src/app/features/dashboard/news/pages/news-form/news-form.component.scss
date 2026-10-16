@@ -17,12 +17,79 @@
 }
 
 .form-grid {
+  align-items: start;
   display: grid;
-  gap: 2rem 2.5rem;
+  gap: 1.5rem 1.25rem;
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.news-form--arabic .form-grid {
+  direction: rtl;
+}
+
+.arabic-toggle {
+  align-items: center;
+  border-bottom: 1px solid #e4e7ec;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  padding-bottom: 1.25rem;
+}
+
+.arabic-toggle span {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.arabic-toggle strong {
+  color: #435064;
+  font-size: 0.95rem;
+}
+
+.arabic-toggle small {
+  color: #7b8594;
+}
+
+.arabic-toggle input {
+  height: 0;
+  opacity: 0;
+  position: absolute;
+  width: 0;
+}
+
+.arabic-toggle i {
+  background: #c9d0da;
+  border-radius: 99rem;
+  height: 1.5rem;
+  position: relative;
+  transition: background var(--waai-transition);
+  width: 2.7rem;
+}
+
+.arabic-toggle i::after {
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0.1rem 0.25rem rgb(16 24 40 / 20%);
+  content: '';
+  height: 1.1rem;
+  left: 0.2rem;
+  position: absolute;
+  top: 0.2rem;
+  transition: transform var(--waai-transition);
+  width: 1.1rem;
+}
+
+.arabic-toggle input:checked + i {
+  background: var(--waai-primary);
+}
+
+.arabic-toggle input:checked + i::after {
+  transform: translateX(1.2rem);
+}
+
 .field {
+  align-content: start;
   display: grid;
   gap: 0.7rem;
 }
@@ -33,7 +100,15 @@
   font-weight: 750;
 }
 
-.field input:not([type='file']) {
+.news-form--arabic .field label,
+.news-form--arabic .field small,
+.news-form--arabic .editor-help {
+  direction: rtl;
+  text-align: right;
+}
+
+.field input:not([type='file']),
+.field textarea {
   background: #fff;
   border: 1px solid #d6dce5;
   border-radius: var(--waai-radius-sm);
@@ -41,7 +116,9 @@
   font: inherit;
   outline: none;
   padding: 0 1rem;
-  transition: border-color var(--waai-transition), box-shadow var(--waai-transition);
+  transition:
+    border-color var(--waai-transition),
+    box-shadow var(--waai-transition);
   width: 100%;
 }
 
@@ -49,18 +126,30 @@
   height: var(--waai-control-height-lg);
 }
 
+.field textarea {
+  min-height: 7rem;
+  padding: 0.8rem 1rem;
+  resize: vertical;
+}
+
 .field input:focus,
+.field textarea:focus,
 .field:focus-within .article-editor {
   border-color: var(--waai-primary);
   box-shadow: 0 0 0 0.2rem rgb(231 61 85 / 12%);
 }
 
-.field input::placeholder {
+.field input::placeholder,
+.field textarea::placeholder {
   color: #aab1bf;
 }
 
 .field small {
   color: #d43f51;
+}
+
+.description-field {
+  margin-top: 1.5rem;
 }
 
 .editor-image-input {
@@ -71,7 +160,9 @@
   border: 1px solid #d6dce5;
   border-radius: var(--waai-radius-sm);
   overflow: hidden;
-  transition: border-color var(--waai-transition), box-shadow var(--waai-transition);
+  transition:
+    border-color var(--waai-transition),
+    box-shadow var(--waai-transition);
 }
 
 ::ng-deep .article-editor .p-editor-toolbar,
@@ -94,6 +185,11 @@
   line-height: 1.75;
   min-height: 22rem;
   padding: 1rem;
+}
+
+::ng-deep .article-editor--rtl .ql-editor {
+  direction: rtl;
+  text-align: right;
 }
 
 ::ng-deep .article-editor .ql-editor.ql-blank::before {
@@ -151,7 +247,7 @@
 ::ng-deep .category-select {
   border-color: #d6dce5;
   border-radius: var(--waai-radius-sm);
-    min-height: var(--waai-control-height-lg);
+  min-height: var(--waai-control-height-lg);
   width: 100%;
 }
 
@@ -160,7 +256,7 @@
 }
 
 .featured-image {
-  margin: 2.6rem 0;
+  margin: 1.5rem 0;
 }
 
 .upload-area {
@@ -200,6 +296,15 @@
   font-size: 0.86rem;
 }
 
+.featured-image-preview {
+  border-radius: calc(var(--waai-radius-sm) - 0.15rem);
+  box-shadow: 0 0.12rem 0.35rem rgb(16 24 40 / 14%);
+  display: block;
+  max-height: 13rem;
+  max-width: min(100%, 22rem);
+  object-fit: contain;
+}
+
 .form-actions {
   border-top: 1px solid #e4e7ec;
   display: flex;
@@ -214,7 +319,7 @@
   cursor: pointer;
   font: inherit;
   font-weight: 700;
-    min-height: var(--waai-control-height-lg);
+  min-height: var(--waai-control-height-lg);
   padding: 0 1.5rem;
 }
 

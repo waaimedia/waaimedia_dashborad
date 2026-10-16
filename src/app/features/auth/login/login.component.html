@@ -27,9 +27,6 @@
           placeholder="Enter your email"
           [attr.aria-invalid]="loginForm.controls.email.invalid && loginForm.controls.email.touched"
         />
-        @if (loginForm.controls.email.invalid && loginForm.controls.email.touched) {
-          <small class="field-error">Enter a valid email address.</small>
-        }
 
         <label for="password">Password</label>
         <div class="password-field">
@@ -50,9 +47,6 @@
             <i class="bi" [class.bi-eye]="!showPassword()" [class.bi-eye-slash]="showPassword()"></i>
           </button>
         </div>
-        @if (loginForm.controls.password.invalid && loginForm.controls.password.touched) {
-          <small class="field-error">Password must be at least 6 characters.</small>
-        }
 
         <div class="login-options">
          

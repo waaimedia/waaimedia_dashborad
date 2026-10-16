@@ -8,27 +8,28 @@ export class NewsMockRepository implements CrudRepository<NewsArticle, NewsArtic
   private articles: NewsArticle[] = [
     {
       id: 1,
-      title: 'Breaking: New Technology Trends in 2024',
-      excerpt: 'Latest insights on emerging technologies...',
-      category: 'Technology',
+      title: 'Building Better Everyday Health Habits',
+      excerpt: 'Simple, practical ways to support your health...',
+      category: 'Health',
       status: 'Published',
-      content: 'Latest insights on emerging technologies.',
+      content: 'Simple, practical ways to support your health.',
     },
     {
       id: 2,
-      title: 'Digital Marketing Strategies for Small Business',
-      excerpt: 'Comprehensive guide to digital marketing...',
-      category: 'Marketing',
+      title: 'Seasonal Food Trends Worth Trying',
+      excerpt: 'A guide to the flavours defining this season...',
+      category: 'Food',
       status: 'Draft',
-      content: 'Comprehensive guide to digital marketing.',
+      content: 'A guide to the flavours defining this season.',
     },
     {
       id: 3,
-      title: 'The Future of Remote Work',
-      excerpt: 'Exploring trends in remote work culture...',
-      category: 'Business',
+      title: 'New TV Shows to Add to Your Watchlist',
+      excerpt: 'A selection of TV shows worth watching now...',
+      category: 'Entertainment',
+      subcategory: 'TV Shows',
       status: 'Published',
-      content: 'Exploring trends in remote work culture.',
+      content: 'A selection of TV shows worth watching now.',
     },
   ];
 
@@ -45,7 +46,9 @@ export class NewsMockRepository implements CrudRepository<NewsArticle, NewsArtic
     const article: NewsArticle = {
       ...payload,
       id: Date.now(),
-      excerpt: this.makeExcerpt(payload.content),
+      excerpt: this.makeExcerpt(
+        payload.description ?? payload.arabicDescription ?? payload.content ?? payload.arabicContent ?? '',
+      ),
     };
     this.articles = [article, ...this.articles];
     return of(article);
@@ -60,7 +63,9 @@ export class NewsMockRepository implements CrudRepository<NewsArticle, NewsArtic
     const article: NewsArticle = {
       ...this.articles[index],
       ...payload,
-      excerpt: this.makeExcerpt(payload.content),
+      excerpt: this.makeExcerpt(
+        payload.description ?? payload.arabicDescription ?? payload.content ?? payload.arabicContent ?? '',
+      ),
     };
     this.articles = this.articles.map((item) => (item.id === id ? article : item));
     return of(article);

@@ -5,7 +5,12 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Select } from 'primeng/select';
 import { DashboardHeaderService } from '../../../layout/dashboard-header.service';
 import { NewsFacade } from '../../data-access/news.facade';
-import { ArticleStatus, NewsArticle } from '../../data-access/news.model';
+import {
+  ArticleStatus,
+  NEWS_CATEGORIES,
+  NewsArticle,
+  NewsCategory,
+} from '../../data-access/news.model';
 import { PaginationComponent } from '../../../../../shared/ui/pagination/pagination.component';
 import { AuthService } from '../../../../../core/auth/auth.service';
 
@@ -25,6 +30,7 @@ export class NewsManagementComponent implements OnInit {
 
   protected readonly query = signal('');
   protected readonly status = signal<'All' | ArticleStatus>('All');
+  protected readonly category = signal<'All' | NewsCategory>('All');
   protected readonly page = signal(1);
   protected readonly pageSize = 10;
   protected readonly statusOptions = [
@@ -32,17 +38,23 @@ export class NewsManagementComponent implements OnInit {
     { label: 'Published', value: 'Published' },
     { label: 'Draft', value: 'Draft' },
   ];
+  protected readonly categoryOptions = [
+    { label: 'All Categories', value: 'All' },
+    ...NEWS_CATEGORIES.map((category) => ({ label: category, value: category })),
+  ];
   protected readonly articles = this.facade.articles;
   protected readonly canDelete = () => this.auth.hasRole('admin');
 
   protected readonly filteredArticles = computed(() => {
     const query = this.query().trim().toLowerCase();
     const status = this.status();
+    const category = this.category();
 
     return this.articles().filter(
       (article) =>
-        (!query || article.title.toLowerCase().includes(query)) &&
-        (status === 'All' || article.status === status),
+        (!query || this.articleTitle(article).toLowerCase().includes(query)) &&
+        (status === 'All' || article.status === status) &&
+        (category === 'All' || article.category === category),
     );
   });
   protected readonly paginatedArticles = computed(() => {
@@ -64,8 +76,19 @@ export class NewsManagementComponent implements OnInit {
     this.page.set(1);
   }
 
+  protected articleTitle(article: NewsArticle): string {
+    return article.isArabic
+      ? (article.arabicTitle ?? article.title ?? '')
+      : (article.title ?? article.arabicTitle ?? '');
+  }
+
   protected setStatus(status: 'All' | ArticleStatus): void {
     this.status.set(status);
+    this.page.set(1);
+  }
+
+  protected setCategory(category: 'All' | NewsCategory): void {
+    this.category.set(category);
     this.page.set(1);
   }
 
@@ -83,16 +106,15 @@ export class NewsManagementComponent implements OnInit {
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
         this.facade.remove(article.id).subscribe({
-          next: () =>
-            {
-              this.page.set(1);
-              this.messages.add({
-                severity: 'success',
-                summary: 'Article deleted',
-                detail: 'The news article has been deleted successfully.',
-                life: 3500,
-              });
-            },
+          next: () => {
+            this.page.set(1);
+            this.messages.add({
+              severity: 'success',
+              summary: 'Article deleted',
+              detail: 'The news article has been deleted successfully.',
+              life: 3500,
+            });
+          },
         });
       },
     });

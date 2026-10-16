@@ -22,20 +22,21 @@ export class LoginComponent {
   protected readonly submitting = signal(false);
   protected readonly loginForm = this.formBuilder.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-    remember: [true],
+    password: ['', [Validators.required]],
   });
 
   protected submit(): void {
+     const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+          void this.router.navigateByUrl(returnUrl?.startsWith('/') ? returnUrl : '/dashboard');
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
     }
 
-    const { email, password, remember } = this.loginForm.getRawValue();
+    const { email, password } = this.loginForm.getRawValue();
     this.submitting.set(true);
     this.auth
-      .login(email, password, remember)
+      .login(email, password)
       .pipe(finalize(() => this.submitting.set(false)))
       .subscribe({
         next: (response) => {

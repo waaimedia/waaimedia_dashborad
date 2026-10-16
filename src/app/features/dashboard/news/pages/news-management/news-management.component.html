@@ -1,13 +1,15 @@
 <section class="news-page">
   <div class="news-heading">
     <h2>News Management</h2>
-    <button class="add-news" type="button" (click)="addNews()"><i class="bi bi-plus-lg"></i> Add News</button>
+    <button class="add-news" type="button" (click)="addNews()">
+      <i class="bi bi-plus-lg"></i> Add News
+    </button>
   </div>
 
   <article class="articles-panel">
     <div class="panel-toolbar">
       <h3>Recent Articles</h3>
-      <div class="filters">
+      <div class="filters flex-wrap">
         <label class="search-field">
           <i class="bi bi-search"></i>
           <input
@@ -18,6 +20,15 @@
             aria-label="Search articles"
           />
         </label>
+        <p-select
+          [options]="categoryOptions"
+          optionLabel="label"
+          optionValue="value"
+          [ngModel]="category()"
+          (ngModelChange)="setCategory($event)"
+          ariaLabel="Filter by category"
+          styleClass="category-filter-select"
+        />
         <p-select
           [options]="statusOptions"
           optionLabel="label"
@@ -43,18 +54,28 @@
           <div class="article-title">
             <span class="article-icon"><i class="bi bi-newspaper"></i></span>
             <div>
-              <strong>{{ article.title }}</strong>
+              <strong>{{ articleTitle(article) }}</strong>
               <span>{{ article.excerpt }}</span>
             </div>
           </div>
           <span class="article-category">{{ article.category }}</span>
-          <span class="status" [class.status--draft]="article.status === 'Draft'">{{ article.status }}</span>
+          <span class="status" [class.status--draft]="article.status === 'Draft'">{{
+            article.status
+          }}</span>
           <div class="actions">
-            <a [routerLink]="['/dashboard/news', article.id, 'edit']" [attr.aria-label]="'Edit ' + article.title">
+            <a
+              [routerLink]="['/dashboard/news', article.id, 'edit']"
+              [attr.aria-label]="'Edit ' + articleTitle(article)"
+            >
               <i class="bi bi-pencil-square"></i>
             </a>
             @if (canDelete()) {
-              <button type="button" class="delete" [attr.aria-label]="'Delete ' + article.title" (click)="deleteArticle(article)">
+              <button
+                type="button"
+                class="delete"
+                [attr.aria-label]="'Delete ' + articleTitle(article)"
+                (click)="deleteArticle(article)"
+              >
                 <i class="bi bi-trash3-fill"></i>
               </button>
             }

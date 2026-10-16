@@ -8,7 +8,12 @@ import { Editor, EditorInitEvent, EditorTextChangeEvent } from 'primeng/editor';
 import { Select } from 'primeng/select';
 import { DashboardHeaderService } from '../../../layout/dashboard-header.service';
 import { NewsFacade } from '../../data-access/news.facade';
-import { ArticleStatus, NewsArticlePayload } from '../../data-access/news.model';
+import {
+  ArticleStatus,
+  ENTERTAINMENT_SUBCATEGORIES,
+  NEWS_CATEGORIES,
+  NewsArticlePayload,
+} from '../../data-access/news.model';
 
 @Component({
   selector: 'app-news-form',
@@ -31,6 +36,7 @@ export class NewsFormComponent implements OnInit {
   private editor: any;
   protected readonly isEditMode = signal(false);
   protected readonly imageName = signal('');
+  protected readonly featuredImagePreview = signal('');
   protected readonly contentPreview = signal('');
   protected readonly previewHtml = computed(() => {
     const content = this.contentPreview();
@@ -44,18 +50,30 @@ export class NewsFormComponent implements OnInit {
 
     return this.sanitizer.bypassSecurityTrustHtml(sanitizedContent);
   });
-  protected readonly categories = [
-    { label: 'Technology', value: 'Technology' },
-    { label: 'Marketing', value: 'Marketing' },
-    { label: 'Business', value: 'Business' },
-    { label: 'Culture', value: 'Culture' },
-  ];
+  protected readonly categories = NEWS_CATEGORIES.map((category) => ({
+    label: category,
+    value: category,
+  }));
+  protected readonly entertainmentSubcategories = ENTERTAINMENT_SUBCATEGORIES.map(
+    (subcategory) => ({
+      label: subcategory,
+      value: subcategory,
+    }),
+  );
+  protected readonly isEntertainment = signal(false);
+  protected readonly isArabic = signal(false);
   protected readonly form = this.formBuilder.nonNullable.group({
     title: ['', [Validators.required, Validators.maxLength(180)]],
+    arabicTitle: [''],
+    description: [''],
+    arabicDescription: [''],
+    authorName: [''],
+    arabicAuthorName: [''],
+    isArabic: false,
     category: ['', Validators.required],
-    linkOne: [''],
-    linkTwo: [''],
+    subcategory: [''],
     content: ['', [Validators.required, Validators.minLength(20)]],
+    arabicContent: [''],
   });
 
   private loadArticle(id: number): void {
@@ -64,20 +82,39 @@ export class NewsFormComponent implements OnInit {
         this.articleId = article.id;
         this.isEditMode.set(true);
         this.imageName.set(article.imageName ?? '');
+        const isArabic = article.isArabic ?? false;
         this.form.patchValue({
-          title: article.title,
-          category: article.category,
-          linkOne: article.linkOne ?? '',
-          linkTwo: article.linkTwo ?? '',
-          content: article.content ?? '',
+          title: isArabic ? '' : (article.title ?? ''),
+          arabicTitle: article.arabicTitle ?? (isArabic ? (article.title ?? '') : ''),
+          description: isArabic ? '' : (article.description ?? ''),
+          arabicDescription:
+            article.arabicDescription ?? (isArabic ? (article.description ?? '') : ''),
+          authorName: isArabic ? '' : (article.authorName ?? ''),
+          arabicAuthorName: article.arabicAuthorName ?? (isArabic ? (article.authorName ?? '') : ''),
+          category: article.category ?? '',
+          subcategory: article.subcategory ?? '',
+          content: isArabic ? '' : (article.content ?? ''),
+          arabicContent: article.arabicContent ?? (isArabic ? (article.content ?? '') : ''),
+          isArabic,
         });
-        this.contentPreview.set(article.content ?? '');
+        this.contentPreview.set(
+          isArabic ? (article.arabicContent ?? article.content ?? '') : (article.content ?? ''),
+        );
       },
       error: () => this.router.navigateByUrl('/dashboard/news'),
     });
   }
 
   ngOnInit(): void {
+    this.form.controls.category.valueChanges.subscribe((category) => {
+      this.updateSubcategoryControl(category);
+    });
+    this.form.controls.isArabic.valueChanges.subscribe((isArabic) => {
+      this.updateArabicControls(isArabic);
+    });
+    this.updateSubcategoryControl(this.form.controls.category.value);
+    this.updateArabicControls(this.form.controls.isArabic.value);
+
     const idParam = this.route.snapshot.paramMap.get('id');
     const id = idParam === null ? null : Number(idParam);
     const isEditing = id !== null && Number.isFinite(id);
@@ -90,7 +127,63 @@ export class NewsFormComponent implements OnInit {
     this.header.showNewsForm(this.isEditMode());
   }
 
-  protected selectImage(event: Event): void {
+  private updateSubcategoryControl(category: string): void {
+    const subcategoryControl = this.form.controls.subcategory;
+    const isEntertainment = !this.isArabic() && category === 'Entertainment';
+
+    this.isEntertainment.set(isEntertainment);
+    subcategoryControl.setValidators(isEntertainment ? [Validators.required] : []);
+    if (!isEntertainment) {
+      subcategoryControl.setValue('', { emitEvent: false });
+    }
+    subcategoryControl.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private updateArabicControls(isArabic: boolean): void {
+    const categoryControl = this.form.controls.category;
+    const subcategoryControl = this.form.controls.subcategory;
+    const titleControl = this.form.controls.title;
+    const contentControl = this.form.controls.content;
+    const arabicTitleControl = this.form.controls.arabicTitle;
+    const arabicContentControl = this.form.controls.arabicContent;
+
+    this.isArabic.set(isArabic);
+    if (isArabic) {
+      this.isEntertainment.set(false);
+      categoryControl.clearValidators();
+      subcategoryControl.clearValidators();
+      titleControl.clearValidators();
+      contentControl.clearValidators();
+      arabicTitleControl.setValidators([Validators.required, Validators.maxLength(180)]);
+      arabicContentControl.setValidators([Validators.required, Validators.minLength(20)]);
+      subcategoryControl.updateValueAndValidity({ emitEvent: false });
+    } else {
+      categoryControl.setValidators([Validators.required]);
+      titleControl.setValidators([Validators.required, Validators.maxLength(180)]);
+      contentControl.setValidators([Validators.required, Validators.minLength(20)]);
+      arabicTitleControl.clearValidators();
+      arabicContentControl.clearValidators();
+      this.updateSubcategoryControl(categoryControl.value);
+    }
+    categoryControl.updateValueAndValidity({ emitEvent: false });
+    titleControl.updateValueAndValidity({ emitEvent: false });
+    contentControl.updateValueAndValidity({ emitEvent: false });
+    arabicTitleControl.updateValueAndValidity({ emitEvent: false });
+    arabicContentControl.updateValueAndValidity({ emitEvent: false });
+    this.contentPreview.set(isArabic ? arabicContentControl.value : contentControl.value);
+  }
+
+  protected isActiveTitleInvalid(): boolean {
+    const control = this.isArabic() ? this.form.controls.arabicTitle : this.form.controls.title;
+    return control.invalid && control.touched;
+  }
+
+  protected isActiveContentInvalid(): boolean {
+    const control = this.isArabic() ? this.form.controls.arabicContent : this.form.controls.content;
+    return control.invalid && control.touched;
+  }
+
+  protected async selectImage(event: Event): Promise<void> {
     const file = (event.target as HTMLInputElement).files?.[0];
 
     if (!file) {
@@ -107,7 +200,18 @@ export class NewsFormComponent implements OnInit {
       return;
     }
 
-    this.imageName.set(file.name);
+    try {
+      const preview = await this.fileToDataUrl(file);
+      this.imageName.set(file.name);
+      this.featuredImagePreview.set(preview);
+    } catch {
+      this.messages.add({
+        severity: 'error',
+        summary: 'Image preview unavailable',
+        detail: 'The selected image could not be read. Please try another image.',
+        life: 3500,
+      });
+    }
   }
 
   protected onEditorInit(event: EditorInitEvent): void {
@@ -126,7 +230,11 @@ export class NewsFormComponent implements OnInit {
     const files = Array.from(input.files ?? []);
     input.value = '';
 
-    const validImages = files.filter((file) => ['image/png', 'image/jpeg', 'image/webp'].includes(file.type) && file.size <= 5 * 1024 * 1024);
+    const validImages = files.filter(
+      (file) =>
+        ['image/png', 'image/jpeg', 'image/webp'].includes(file.type) &&
+        file.size <= 5 * 1024 * 1024,
+    );
 
     if (validImages.length !== files.length) {
       this.messages.add({
@@ -164,32 +272,63 @@ export class NewsFormComponent implements OnInit {
   }
 
   protected save(status: ArticleStatus): void {
-    if (this.form.invalid) {
+    console.log("Saving news article..." , this.form.value);
+
+    if (status === 'Published' && this.form.invalid) {
       this.form.markAllAsTouched();
       this.messages.add({
         severity: 'warn',
         summary: 'Complete the required fields',
-        detail: 'News title, category, and article content are required before saving.',
+        detail: this.isArabic()
+          ? 'News title and article content are required before saving.'
+          : 'News title, category, and article content are required before saving.',
         life: 3500,
       });
       return;
     }
 
+    const {
+      isArabic,
+      title,
+      arabicTitle,
+      description,
+      arabicDescription,
+      authorName,
+      arabicAuthorName,
+      category,
+      subcategory,
+      content,
+      arabicContent,
+    } = this.form.getRawValue();
     const payload: NewsArticlePayload = {
-      ...this.form.getRawValue(),
-      imageName: this.imageName(),
+      isArabic,
+      ...(isArabic
+        ? { arabicTitle, arabicDescription, arabicAuthorName, arabicContent }
+        : {
+            title,
+            description,
+            authorName,
+            content,
+            category,
+            ...(this.isEntertainment() ? { subcategory } : {}),
+            imageName: this.imageName(),
+          }),
       status,
     };
-    const request = this.articleId !== null
-      ? this.newsFacade.update(this.articleId, payload)
-      : this.newsFacade.create(payload);
+    const request =
+      this.articleId !== null
+        ? this.newsFacade.update(this.articleId, payload)
+        : this.newsFacade.create(payload);
 
     request.subscribe({
       next: () => {
         this.messages.add({
           severity: 'success',
           summary: this.isEditMode() ? 'News updated' : 'News created',
-          detail: status === 'Published' ? 'Your news article has been published.' : 'Your news article was saved as a draft.',
+          detail:
+            status === 'Published'
+              ? 'Your news article has been published.'
+              : 'Your news article was saved as a draft.',
           life: 3500,
         });
         this.router.navigateByUrl('/dashboard/news');

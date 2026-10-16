@@ -58,14 +58,14 @@ export class AuthService {
     return this.getActiveStorage()?.getItem(ACCESS_TOKEN_KEY) ?? null;
   }
 
-  login(email: string, password: string, remember: boolean): Observable<LoginResponse> {
+  login(email: string, password: string): Observable<LoginResponse> {
     return this.http
       .post<LoginResponse>(`${this.authUrl}/login`, {
         email,
         password,
-        device_name: 'Waai Media Dashboard',
+        // device_name: 'Waai Media Dashboard',
       })
-      .pipe(tap((response) => this.startSession(response.token, response.user, remember)));
+      .pipe(tap((response) => this.startSession(response.token, response.user)));
   }
 
   getCurrentUser(): Observable<CurrentUserResponse> {
@@ -106,11 +106,10 @@ export class AuthService {
     this.currentUser.set(null);
   }
 
-  private startSession(token: string, user: AuthUser, remember: boolean): void {
+  private startSession(token: string, user: AuthUser): void {
     this.clearSession();
-    const storage = remember ? localStorage : sessionStorage;
-    storage.setItem(ACCESS_TOKEN_KEY, token);
-    storage.setItem(USER_KEY, JSON.stringify(user));
+    localStorage.setItem(ACCESS_TOKEN_KEY, token);
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
     this.currentUser.set(user);
   }
 
