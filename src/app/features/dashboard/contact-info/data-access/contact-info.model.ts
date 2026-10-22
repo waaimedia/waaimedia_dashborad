@@ -12,3 +12,18 @@ export interface ContactInfo {
   address: string;
   googleMapsUrl: string;
 }
+
+export const EMPTY_CONTACT_INFO: ContactInfo = {
+  phonePrimary: '',
+  phoneSecondary: '',
+  phoneThird: '',
+  officialEmail: '',
+  facebook: '',
+  instagram: '',
+  youtube: '',
+  linkedin: '',
+  tiktok: '',
+  whatsapp: '',
+  address: '',
+  googleMapsUrl: '',
+};

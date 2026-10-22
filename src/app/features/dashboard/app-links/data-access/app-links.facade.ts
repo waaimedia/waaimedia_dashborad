@@ -8,12 +8,26 @@ export class AppLinksFacade {
   private readonly repository = inject(APP_LINKS_REPOSITORY);
 
   readonly links = signal<AppLinks | null>(null);
+  readonly loading = signal(false);
+  readonly saving = signal(false);
 
   load() {
-    return this.repository.get().pipe(tap((links) => this.links.set(links)));
+    this.loading.set(true);
+    return this.repository.get().pipe(
+      tap({
+        next: (links) => this.links.set(links),
+        finalize: () => this.loading.set(false),
+      }),
+    );
   }
 
   save(links: AppLinks) {
-    return this.repository.save(links).pipe(tap((savedLinks) => this.links.set(savedLinks)));
+    this.saving.set(true);
+    return this.repository.save(links).pipe(
+      tap({
+        next: ({ links: savedLinks }) => this.links.set(savedLinks),
+        finalize: () => this.saving.set(false),
+      }),
+    );
   }
 }

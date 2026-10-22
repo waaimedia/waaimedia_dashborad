@@ -1,6 +1,7 @@
 :host { display: block; }
 .counters-page { align-items: center; display: flex; justify-content: center; }
 .mobile-heading { display: none; }
+.loading-state { color: #7b8594; margin: 2rem 0; }
 .counters-grid {
   display: grid;
   gap: 1rem;

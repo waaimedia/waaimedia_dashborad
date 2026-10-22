@@ -4,6 +4,9 @@
     <p>Update the numeric counters displayed on your website homepage</p>
   </div>
 
+  @if (loading()) {
+    <p class="loading-state">Loading counters…</p>
+  } @else {
   <div class="counters-grid">
     @for (counter of counters(); track counter.key) {
       <article class="counter-card" [class.counter-card--editing]="editingKey() === counter.key">
@@ -36,9 +39,11 @@
     }
 
     <div class="save-area">
-      <button type="button" [disabled]="!hasChanges()" (click)="saveAll()">
-        <i class="bi bi-floppy-fill"></i> Save All Changes
+      <button type="button" [disabled]="!hasChanges() || saving()" (click)="saveAll()">
+        <i class="bi" [class.bi-floppy-fill]="!saving()" [class.bi-arrow-repeat]="saving()"></i>
+        {{ saving() ? 'Saving…' : 'Save All Changes' }}
       </button>
     </div>
   </div>
+  }
 </section>

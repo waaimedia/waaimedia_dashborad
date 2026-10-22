@@ -13,15 +13,15 @@ import { NewsMockRepository } from './features/dashboard/news/data-access/news-m
 import { NEWS_REPOSITORY } from './features/dashboard/news/data-access/news.repository';
 import { TeamMockRepository } from './features/dashboard/team/data-access/team-mock.repository';
 import { TEAM_REPOSITORY } from './features/dashboard/team/data-access/team.repository';
-import { CountersMockRepository } from './features/dashboard/counters/data-access/counters-mock.repository';
+import { CountersApiRepository } from './features/dashboard/counters/data-access/counters-api.repository';
 import { COUNTERS_REPOSITORY } from './features/dashboard/counters/data-access/counters.repository';
 import { ClientMockRepository } from './features/dashboard/clients/data-access/client-mock.repository';
 import { CLIENT_REPOSITORY } from './features/dashboard/clients/data-access/client.repository';
 import { EventMockRepository } from './features/dashboard/events/data-access/event-mock.repository';
 import { EVENT_REPOSITORY } from './features/dashboard/events/data-access/event.repository';
-import { ContactInfoMockRepository } from './features/dashboard/contact-info/data-access/contact-info-mock.repository';
+import { ContactInfoApiRepository } from './features/dashboard/contact-info/data-access/contact-info-api.repository';
 import { CONTACT_INFO_REPOSITORY } from './features/dashboard/contact-info/data-access/contact-info.repository';
-import { AppLinksMockRepository } from './features/dashboard/app-links/data-access/app-links-mock.repository';
+import { AppLinksApiRepository } from './features/dashboard/app-links/data-access/app-links-api.repository';
 import { APP_LINKS_REPOSITORY } from './features/dashboard/app-links/data-access/app-links.repository';
 import { BlogMockRepository } from './features/dashboard/blogs/data-access/blog-mock.repository';
 import { BLOG_REPOSITORY } from './features/dashboard/blogs/data-access/blog.repository';
@@ -43,16 +43,13 @@ export const appConfig: ApplicationConfig = {
     { provide: NEWS_REPOSITORY, useExisting: NewsMockRepository },
     // Replace TeamMockRepository with the API implementation when endpoints are ready.
     { provide: TEAM_REPOSITORY, useExisting: TeamMockRepository },
-    // Replace CountersMockRepository with the API implementation when endpoints are ready.
-    { provide: COUNTERS_REPOSITORY, useExisting: CountersMockRepository },
+    { provide: COUNTERS_REPOSITORY, useExisting: CountersApiRepository },
     // Replace ClientMockRepository with the API implementation when endpoints are ready.
     { provide: CLIENT_REPOSITORY, useExisting: ClientMockRepository },
     // Replace EventMockRepository with the API implementation when endpoints are ready.
     { provide: EVENT_REPOSITORY, useExisting: EventMockRepository },
-    // Replace ContactInfoMockRepository with the API implementation when endpoints are ready.
-    { provide: CONTACT_INFO_REPOSITORY, useExisting: ContactInfoMockRepository },
-    // Replace AppLinksMockRepository with the API implementation when endpoints are ready.
-    { provide: APP_LINKS_REPOSITORY, useExisting: AppLinksMockRepository },
+    { provide: CONTACT_INFO_REPOSITORY, useExisting: ContactInfoApiRepository },
+    { provide: APP_LINKS_REPOSITORY, useExisting: AppLinksApiRepository },
     // Replace BlogMockRepository with the API implementation when endpoints are ready.
     { provide: BLOG_REPOSITORY, useExisting: BlogMockRepository },
     // Replace UserMockRepository with the API implementation when endpoints are ready.

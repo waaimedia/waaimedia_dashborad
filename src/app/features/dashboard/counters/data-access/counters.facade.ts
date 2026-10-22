@@ -9,6 +9,7 @@ export class CountersFacade {
 
   readonly counters = signal<WebsiteCounter[]>([]);
   readonly loading = signal(false);
+  readonly saving = signal(false);
 
   load() {
     this.loading.set(true);
@@ -21,6 +22,12 @@ export class CountersFacade {
   }
 
   save(values: CounterValues) {
-    return this.repository.save(values).pipe(tap((counters) => this.counters.set(counters)));
+    this.saving.set(true);
+    return this.repository.save(values).pipe(
+      tap({
+        next: ({ counters }) => this.counters.set(counters),
+        finalize: () => this.saving.set(false),
+      }),
+    );
   }
 }

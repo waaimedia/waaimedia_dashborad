@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { ContactInfo } from './contact-info.model';
-import { ContactInfoRepository } from './contact-info.repository';
+import { ContactInfoRepository, ContactInfoSaveResult } from './contact-info.repository';
 
 @Injectable({ providedIn: 'root' })
 export class ContactInfoMockRepository implements ContactInfoRepository {
@@ -20,12 +20,12 @@ export class ContactInfoMockRepository implements ContactInfoRepository {
     googleMapsUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!',
   };
 
-  get(): Observable<ContactInfo> {
+  get(): Observable<ContactInfo | null> {
     return of({ ...this.contactInfo });
   }
 
-  save(contactInfo: ContactInfo): Observable<ContactInfo> {
+  save(contactInfo: ContactInfo): Observable<ContactInfoSaveResult> {
     this.contactInfo = { ...contactInfo };
-    return of({ ...this.contactInfo });
+    return of({ message: 'Contact information updated successfully.', contactInfo: { ...this.contactInfo } });
   }
 }

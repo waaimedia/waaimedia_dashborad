@@ -3,7 +3,7 @@ import { DecimalPipe } from '@angular/common';
 import { MessageService } from 'primeng/api';
 import { DashboardHeaderService } from '../../../layout/dashboard-header.service';
 import { CountersFacade } from '../../data-access/counters.facade';
-import { CounterKey, CounterValues } from '../../data-access/counter.model';
+import { CounterKey, CounterValues, EMPTY_COUNTER_VALUES } from '../../data-access/counter.model';
 
 @Component({
   selector: 'app-counters-management',
@@ -17,8 +17,10 @@ export class CountersManagementComponent implements OnInit {
   private readonly messages = inject(MessageService);
 
   protected readonly counters = this.facade.counters;
+  protected readonly loading = this.facade.loading;
+  protected readonly saving = this.facade.saving;
   protected readonly editingKey = signal<CounterKey | null>(null);
-  protected readonly values = signal<CounterValues>({ clients: 0, projects: 0, events: 0, awards: 0, campaigns: 0 });
+  protected readonly values = signal<CounterValues>({ ...EMPTY_COUNTER_VALUES });
   protected readonly hasChanges = computed(() =>
     this.counters().some((counter) => counter.value !== this.values()[counter.key]),
   );
@@ -28,13 +30,10 @@ export class CountersManagementComponent implements OnInit {
     this.facade.load().subscribe({
       next: (counters) => {
         this.values.set(
-          counters.reduce<CounterValues>((result, counter) => ({ ...result, [counter.key]: counter.value }), {
-            clients: 0,
-            projects: 0,
-            events: 0,
-            awards: 0,
-            campaigns: 0,
-          }),
+          counters.reduce<CounterValues>(
+            (result, counter) => ({ ...result, [counter.key]: counter.value }),
+            { ...EMPTY_COUNTER_VALUES },
+          ),
         );
       },
     });
@@ -60,11 +59,11 @@ export class CountersManagementComponent implements OnInit {
 
     this.finishEditing();
     this.facade.save(this.values()).subscribe({
-      next: () =>
+      next: ({ message }) =>
         this.messages.add({
           severity: 'success',
           summary: 'Counters saved',
-          detail: 'All homepage counters have been updated.',
+          detail: message,
           life: 3500,
         }),
     });

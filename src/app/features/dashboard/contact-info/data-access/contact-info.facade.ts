@@ -8,12 +8,26 @@ export class ContactInfoFacade {
   private readonly repository = inject(CONTACT_INFO_REPOSITORY);
 
   readonly contactInfo = signal<ContactInfo | null>(null);
+  readonly loading = signal(false);
+  readonly saving = signal(false);
 
   load() {
-    return this.repository.get().pipe(tap((contactInfo) => this.contactInfo.set(contactInfo)));
+    this.loading.set(true);
+    return this.repository.get().pipe(
+      tap({
+        next: (contactInfo) => this.contactInfo.set(contactInfo),
+        finalize: () => this.loading.set(false),
+      }),
+    );
   }
 
   save(contactInfo: ContactInfo) {
-    return this.repository.save(contactInfo).pipe(tap((savedContactInfo) => this.contactInfo.set(savedContactInfo)));
+    this.saving.set(true);
+    return this.repository.save(contactInfo).pipe(
+      tap({
+        next: ({ contactInfo: savedContactInfo }) => this.contactInfo.set(savedContactInfo),
+        finalize: () => this.saving.set(false),
+      }),
+    );
   }
 }

@@ -14,14 +14,17 @@
         <label class="field">
           <span>Phone 1 <em>(Primary)</em></span>
           <input type="tel" formControlName="phonePrimary" placeholder="+20 10 24940180" />
+          @if (errorFor('phonePrimary'); as error) { <small>{{ error }}</small> }
         </label>
         <label class="field">
           <span>Phone 2 <em>(Secondary)</em></span>
           <input type="tel" formControlName="phoneSecondary" placeholder="+20 10 03450774" />
+          @if (errorFor('phoneSecondary'); as error) { <small>{{ error }}</small> }
         </label>
         <label class="field">
           <span>Phone 3 <em>(Third)</em></span>
           <input type="tel" formControlName="phoneThird" placeholder="+20 10 29105073" />
+          @if (errorFor('phoneThird'); as error) { <small>{{ error }}</small> }
         </label>
       </div>
     </section>
@@ -35,7 +38,7 @@
         <label class="field">
           <span>Official Email</span>
           <input type="email" formControlName="officialEmail" placeholder="company@gmail.com" />
-          @if (form.controls.officialEmail.invalid && form.controls.officialEmail.touched) { <small>Enter a valid email address.</small> }
+          @if (errorFor('officialEmail'); as error) { <small>{{ error }}</small> } @else if (form.controls.officialEmail.invalid && form.controls.officialEmail.touched) { <small>Enter a valid email address.</small> }
         </label>
       </div>
     </section>
@@ -46,12 +49,12 @@
         <p>Connect your social media profiles</p>
       </div>
       <div class="section-fields social-fields">
-        <label class="field"><span><i class="bi bi-facebook facebook"></i>Facebook</span><input type="url" formControlName="facebook" placeholder="https://facebook.com/company" /></label>
-        <label class="field"><span><i class="bi bi-instagram instagram"></i>Instagram</span><input type="url" formControlName="instagram" placeholder="https://instagram.com/company" /></label>
-        <label class="field"><span><i class="bi bi-youtube youtube"></i>Youtube</span><input type="url" formControlName="youtube" placeholder="https://youtube.com/company" /></label>
-        <label class="field"><span><i class="bi bi-linkedin linkedin"></i>LinkedIn</span><input type="url" formControlName="linkedin" placeholder="https://linkedin.com/company" /></label>
-        <label class="field"><span><i class="bi bi-tiktok tiktok"></i>Tiktok</span><input type="url" formControlName="tiktok" placeholder="https://tiktok.com/company" /></label>
-        <label class="field"><span><i class="bi bi-whatsapp whatsapp"></i>Whatsapp</span><input type="url" formControlName="whatsapp" placeholder="https://wa.me/201024940180" /></label>
+        <label class="field"><span><i class="bi bi-facebook facebook"></i>Facebook</span><input type="url" formControlName="facebook" placeholder="https://facebook.com/company" />@if (errorFor('facebook'); as error) { <small>{{ error }}</small> }</label>
+        <label class="field"><span><i class="bi bi-instagram instagram"></i>Instagram</span><input type="url" formControlName="instagram" placeholder="https://instagram.com/company" />@if (errorFor('instagram'); as error) { <small>{{ error }}</small> }</label>
+        <label class="field"><span><i class="bi bi-youtube youtube"></i>Youtube</span><input type="url" formControlName="youtube" placeholder="https://youtube.com/company" />@if (errorFor('youtube'); as error) { <small>{{ error }}</small> }</label>
+        <label class="field"><span><i class="bi bi-linkedin linkedin"></i>LinkedIn</span><input type="url" formControlName="linkedin" placeholder="https://linkedin.com/company" />@if (errorFor('linkedin'); as error) { <small>{{ error }}</small> }</label>
+        <label class="field"><span><i class="bi bi-tiktok tiktok"></i>Tiktok</span><input type="url" formControlName="tiktok" placeholder="https://tiktok.com/company" />@if (errorFor('tiktok'); as error) { <small>{{ error }}</small> }</label>
+        <label class="field"><span><i class="bi bi-whatsapp whatsapp"></i>Whatsapp</span><input type="url" formControlName="whatsapp" placeholder="https://wa.me/201024940180" />@if (errorFor('whatsapp'); as error) { <small>{{ error }}</small> }</label>
       </div>
     </section>
 
@@ -64,6 +67,7 @@
         <label class="field">
           <span>Complete Address</span>
           <textarea formControlName="address" placeholder="123 Main Street, City, State 12345"></textarea>
+          @if (errorFor('address'); as error) { <small>{{ error }}</small> }
         </label>
       </div>
     </section>
@@ -77,13 +81,14 @@
         <label class="field">
           <span>Google Maps URL</span>
           <textarea formControlName="googleMapsUrl" placeholder="https://maps.google.com/... "></textarea>
+          @if (errorFor('googleMapsUrl'); as error) { <small>{{ error }}</small> }
         </label>
       </div>
     </section>
 
     <div class="form-actions">
-      <button type="button" class="cancel" (click)="cancel()"><i class="bi bi-x-lg"></i> Cancel</button>
-      <button type="submit" class="save"><i class="bi bi-floppy-fill"></i> Save Changes</button>
+      <button type="button" class="cancel" [disabled]="saving()" (click)="cancel()"><i class="bi bi-x-lg"></i> Cancel</button>
+      <button type="submit" class="save" [disabled]="loading() || saving()"><i class="bi" [class.bi-floppy-fill]="!saving()" [class.bi-arrow-repeat]="saving()"></i> {{ saving() ? 'Saving…' : 'Save Changes' }}</button>
     </div>
   </form>
 </section>

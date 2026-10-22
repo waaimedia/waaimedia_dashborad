@@ -26,8 +26,6 @@ export class LoginComponent {
   });
 
   protected submit(): void {
-     const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-          void this.router.navigateByUrl(returnUrl?.startsWith('/') ? returnUrl : '/dashboard');
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;

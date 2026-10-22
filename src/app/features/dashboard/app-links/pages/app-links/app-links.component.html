@@ -9,25 +9,25 @@
       <label class="field">
         <span><i class="bi bi-google-play google-play"></i> Google Play Store Link</span>
         <input type="url" formControlName="googlePlay" placeholder="https://play.google.com/store/apps/details?id=com.yourcompany.app" />
-        @if (form.controls.googlePlay.invalid && form.controls.googlePlay.touched) { <small>Enter a valid Google Play URL.</small> }
+        @if (errorFor('googlePlay'); as error) { <small>{{ error }}</small> } @else if (form.controls.googlePlay.invalid && form.controls.googlePlay.touched) { <small>Enter a valid Google Play URL.</small> }
       </label>
 
       <label class="field">
         <span><i class="bi bi-apple apple"></i> Apple App Store Link</span>
         <input type="url" formControlName="appleAppStore" placeholder="https://apps.apple.com/app/your-app/id123456789" />
-        @if (form.controls.appleAppStore.invalid && form.controls.appleAppStore.touched) { <small>Enter a valid App Store URL.</small> }
+        @if (errorFor('appleAppStore'); as error) { <small>{{ error }}</small> } @else if (form.controls.appleAppStore.invalid && form.controls.appleAppStore.touched) { <small>Enter a valid App Store URL.</small> }
       </label>
 
       <label class="field">
         <span><i class="bi bi-phone other-platform"></i> App Gallery / Other Platform <em>(optional)</em></span>
         <input type="url" formControlName="otherPlatform" placeholder="https://appgallery.huawei.com/app/..." />
-        @if (form.controls.otherPlatform.invalid && form.controls.otherPlatform.touched) { <small>Enter a valid URL.</small> }
+        @if (errorFor('otherPlatform'); as error) { <small>{{ error }}</small> } @else if (form.controls.otherPlatform.invalid && form.controls.otherPlatform.touched) { <small>Enter a valid URL.</small> }
       </label>
     </div>
 
     <div class="form-actions">
-      <button type="submit" class="save"><i class="bi bi-floppy-fill"></i> Save Changes</button>
-      <button type="button" class="cancel" (click)="cancel()">Cancel</button>
+      <button type="submit" class="save" [disabled]="loading() || saving()"><i class="bi" [class.bi-floppy-fill]="!saving()" [class.bi-arrow-repeat]="saving()"></i> {{ saving() ? 'Saving…' : 'Save Changes' }}</button>
+      <button type="button" class="cancel" [disabled]="saving()" (click)="cancel()">Cancel</button>
     </div>
   </form>
 

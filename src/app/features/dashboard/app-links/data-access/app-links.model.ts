@@ -3,3 +3,9 @@ export interface AppLinks {
   appleAppStore: string;
   otherPlatform: string;
 }
+
+export const EMPTY_APP_LINKS: AppLinks = {
+  googlePlay: '',
+  appleAppStore: '',
+  otherPlatform: '',
+};
