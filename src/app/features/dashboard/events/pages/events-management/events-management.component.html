@@ -29,15 +29,15 @@
         <article class="event-row">
           <div class="event-title">
             <span class="event-icon"><i class="bi bi-calendar-event"></i></span>
-            <strong>{{ event.title }}</strong>
+            <strong>{{ event.nameEn }}</strong>
           </div>
-          <span class="event-date">{{ event.date | date: 'MMM d, y' }}</span>
-          <span class="event-category">{{ event.category }}</span>
-          <span class="status" [class.status--draft]="event.status === 'Draft'">{{ event.status }}</span>
+          <span class="event-date">{{ event.eventDate | date: 'MMM d, y' }} @if (event.eventTime) { · {{ event.eventTime }} }</span>
+          <span class="event-category">{{ event.categoryEn }} @if (event.categoryAr) { <small>({{ event.categoryAr }})</small> }</span>
+          <span class="status" [class.status--draft]="event.status === 'draft'">{{ event.status }}</span>
           <div class="actions">
-            <a [routerLink]="['/dashboard/events-calendar', event.id, 'edit']" [attr.aria-label]="'Edit ' + event.title"><i class="bi bi-pencil-square"></i></a>
+            <a [routerLink]="['/dashboard/events-calendar', event.id, 'edit']" [attr.aria-label]="'Edit ' + event.nameEn"><i class="bi bi-pencil-square"></i></a>
             @if (canDelete()) {
-              <button type="button" class="delete" (click)="deleteEvent(event)" [attr.aria-label]="'Delete ' + event.title"><i class="bi bi-trash3-fill"></i></button>
+              <button type="button" class="delete" (click)="deleteEvent(event)" [attr.aria-label]="'Delete ' + event.nameEn"><i class="bi bi-trash3-fill"></i></button>
             }
           </div>
         </article>
@@ -46,6 +46,6 @@
       }
     </div>
 
-    <app-pagination [page]="page()" [pageSize]="pageSize" [totalRecords]="filteredEvents().length" (pageChange)="changePage($event)" />
+    <app-pagination [page]="page()" [pageSize]="pageSize" [totalRecords]="totalRecords()" (pageChange)="changePage($event)" />
   </article>
 </section>

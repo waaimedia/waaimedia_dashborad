@@ -1,24 +1,39 @@
 import { EntityId } from '../../../../core/data-access/crud-repository';
 
-export type EventStatus = 'Published' | 'Draft';
+export type EventStatus = 'draft' | 'published';
 
 export interface CalendarEvent {
   id: EntityId;
-  title: string;
-  date: string;
-  category: string;
-  place: string;
-  eventLink?: string;
+  slug: string | null;
+  nameEn: string;
+  nameAr: string;
+  categoryEn: string;
+  categoryAr: string;
+  descriptionEn: string;
+  descriptionAr: string;
+  placeEn: string;
+  placeAr: string;
+  eventDate: string;
+  eventTime: string;
+  coverImageUrl: string;
+  url: string;
   status: EventStatus;
-  imageName?: string;
+  publishedAt: string | null;
+  createdAt: string | null;
+  updatedAt: string | null;
 }
 
 export interface CalendarEventPayload {
-  title: string;
-  date: string;
-  category: string;
-  place: string;
-  eventLink?: string;
-  status: EventStatus;
-  imageName?: string;
+  nameEn: string;
+  nameAr: string;
+  categoryEn: string;
+  categoryAr: string;
+  descriptionEn: string;
+  descriptionAr: string;
+  placeEn: string;
+  placeAr: string;
+  eventDate: string;
+  eventTime: string;
+  url: string;
+  coverImage?: File;
 }

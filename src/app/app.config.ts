@@ -17,7 +17,7 @@ import { CountersApiRepository } from './features/dashboard/counters/data-access
 import { COUNTERS_REPOSITORY } from './features/dashboard/counters/data-access/counters.repository';
 import { ClientMockRepository } from './features/dashboard/clients/data-access/client-mock.repository';
 import { CLIENT_REPOSITORY } from './features/dashboard/clients/data-access/client.repository';
-import { EventMockRepository } from './features/dashboard/events/data-access/event-mock.repository';
+import { EventApiRepository } from './features/dashboard/events/data-access/event-api.repository';
 import { EVENT_REPOSITORY } from './features/dashboard/events/data-access/event.repository';
 import { ContactInfoApiRepository } from './features/dashboard/contact-info/data-access/contact-info-api.repository';
 import { CONTACT_INFO_REPOSITORY } from './features/dashboard/contact-info/data-access/contact-info.repository';
@@ -46,8 +46,7 @@ export const appConfig: ApplicationConfig = {
     { provide: COUNTERS_REPOSITORY, useExisting: CountersApiRepository },
     // Replace ClientMockRepository with the API implementation when endpoints are ready.
     { provide: CLIENT_REPOSITORY, useExisting: ClientMockRepository },
-    // Replace EventMockRepository with the API implementation when endpoints are ready.
-    { provide: EVENT_REPOSITORY, useExisting: EventMockRepository },
+    { provide: EVENT_REPOSITORY, useExisting: EventApiRepository },
     { provide: CONTACT_INFO_REPOSITORY, useExisting: ContactInfoApiRepository },
     { provide: APP_LINKS_REPOSITORY, useExisting: AppLinksApiRepository },
     // Replace BlogMockRepository with the API implementation when endpoints are ready.

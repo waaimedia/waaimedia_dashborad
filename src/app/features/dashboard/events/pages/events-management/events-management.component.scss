@@ -21,6 +21,7 @@
 .event-icon { align-items: center; background: #e8ebf0; border-radius: .55rem; color: #98a2b3; display: inline-flex; flex: 0 0 auto; height: 3.5rem; justify-content: center; width: 3.5rem; }
 .event-title strong { color: #465266; font-size: .95rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .event-date, .event-category { color: #8a93a3; font-size: .88rem; }
+.event-category small { color: #98a2b3; font-size: .78rem; }
 .status { background: #d9f8e5; border-radius: 99rem; color: #258452; font-size: .78rem; font-weight: 700; justify-self: start; padding: .27rem .7rem; }
 .status--draft { background: #fff5c5; color: #a96c0a; }
 .actions { display: flex; gap: .85rem; }

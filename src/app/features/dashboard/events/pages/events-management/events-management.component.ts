@@ -25,33 +25,36 @@ export class EventsManagementComponent implements OnInit {
   private readonly auth = inject(AuthService);
 
   protected readonly query = signal('');
-  protected readonly status = signal<'All' | EventStatus>('All');
+  protected readonly status = signal<'all' | EventStatus>('all');
   protected readonly page = signal(1);
   protected readonly pageSize = 10;
   protected readonly statusOptions = [
-    { label: 'All Status', value: 'All' },
-    { label: 'Published', value: 'Published' },
-    { label: 'Draft', value: 'Draft' },
+    { label: 'All Status', value: 'all' },
+    { label: 'Published', value: 'published' },
+    { label: 'Draft', value: 'draft' },
   ];
   protected readonly events = this.facade.events;
+  protected readonly totalRecords = this.facade.totalRecords;
   protected readonly canDelete = () => this.auth.hasRole('admin');
   protected readonly filteredEvents = computed(() => {
     const query = this.query().trim().toLowerCase();
     const status = this.status();
     return this.events().filter(
       (event) =>
-        (!query || event.title.toLowerCase().includes(query) || event.category.toLowerCase().includes(query)) &&
-        (status === 'All' || event.status === status),
+        (!query ||
+          event.nameEn.toLowerCase().includes(query) ||
+          event.nameAr.toLowerCase().includes(query) ||
+          event.categoryEn.toLowerCase().includes(query) ||
+          event.categoryAr.toLowerCase().includes(query)) &&
+        (status === 'all' || event.status === status),
     );
   });
-  protected readonly paginatedEvents = computed(() => {
-    const start = (this.page() - 1) * this.pageSize;
-    return this.filteredEvents().slice(start, start + this.pageSize);
-  });
+  // The API already returns one page of results, so do not slice it again.
+  protected readonly paginatedEvents = this.filteredEvents;
 
   ngOnInit(): void {
     this.header.showEventsList();
-    this.facade.load().subscribe();
+    this.loadPage(1);
   }
 
   protected addEvent(): void {
@@ -60,30 +63,31 @@ export class EventsManagementComponent implements OnInit {
 
   protected setQuery(query: string): void {
     this.query.set(query);
-    this.page.set(1);
+    this.loadPage(1);
   }
 
-  protected setStatus(status: 'All' | EventStatus): void {
+  protected setStatus(status: 'all' | EventStatus): void {
     this.status.set(status);
-    this.page.set(1);
+    this.loadPage(1);
   }
 
   protected changePage(page: number): void {
-    this.page.set(page);
+    if (!Number.isInteger(page) || page < 1) return;
+    this.loadPage(page);
   }
 
   protected deleteEvent(event: CalendarEvent): void {
     if (!this.auth.hasRole('admin')) return;
     this.confirmation.confirm({
       header: 'Delete event?',
-      message: `“${event.title}” will be permanently deleted.`,
+      message: `“${event.nameEn}” will be permanently deleted.`,
       acceptLabel: 'Delete',
       rejectLabel: 'Cancel',
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
         this.facade.remove(event.id).subscribe({
           next: () => {
-            this.page.set(1);
+            this.loadPage(1);
             this.messages.add({
               severity: 'success',
               summary: 'Event deleted',
@@ -94,5 +98,15 @@ export class EventsManagementComponent implements OnInit {
         });
       },
     });
+  }
+
+  private loadPage(page: number): void {
+    this.page.set(page);
+    const status = this.status();
+    this.facade.load({
+      page,
+      pageSize: this.pageSize,
+      ...(status === 'all' ? {} : { status }),
+    }).subscribe();
   }
 }

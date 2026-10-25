@@ -21,14 +21,22 @@ export class EventFormComponent implements OnInit {
   private readonly facade = inject(EventFacade);
 
   private eventId: number | string | null = null;
+  private coverImage?: File;
   protected readonly isEditMode = signal(false);
   protected readonly imageName = signal('');
+  protected readonly imagePreviewUrl = signal('');
   protected readonly form = this.formBuilder.nonNullable.group({
-    title: ['', [Validators.required, Validators.maxLength(180)]],
-    date: ['', Validators.required],
-    category: ['', [Validators.required, Validators.maxLength(100)]],
-    place: ['', [Validators.required, Validators.maxLength(180)]],
-    eventLink: ['', Validators.pattern(/^https?:\/\/.+/i)],
+    nameEn: ['', [Validators.required, Validators.maxLength(255), Validators.pattern(/[A-Za-z]/)]],
+    nameAr: ['', Validators.maxLength(255)],
+    categoryEn: ['', Validators.maxLength(150)],
+    categoryAr: ['', Validators.maxLength(150)],
+    descriptionEn: [''],
+    descriptionAr: [''],
+    placeEn: ['', Validators.maxLength(255)],
+    placeAr: ['', Validators.maxLength(255)],
+    eventDate: [''],
+    eventTime: [''],
+    url: ['', Validators.pattern(/^https?:\/\/.+/i)],
   });
 
   ngOnInit(): void {
@@ -49,27 +57,47 @@ export class EventFormComponent implements OnInit {
       return;
     }
 
-    if (!['image/png', 'image/jpeg'].includes(file.type) || file.size > 10 * 1024 * 1024) {
-      this.messages.add({ severity: 'warn', summary: 'Invalid image', detail: 'Use a PNG or JPG image up to 10MB.', life: 3500 });
+    if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type) || file.size > 10 * 1024 * 1024) {
+      this.messages.add({ severity: 'warn', summary: 'Invalid image', detail: 'Use a PNG, JPG, or WEBP image up to 10MB.', life: 3500 });
       return;
     }
 
+    this.coverImage = file;
     this.imageName.set(file.name);
+    this.imagePreviewUrl.set(URL.createObjectURL(file));
   }
 
   protected save(status: EventStatus): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      this.messages.add({ severity: 'warn', summary: 'Complete the required fields', detail: 'Title, date, category, and place are required before saving.', life: 3500 });
+    if (this.form.controls.nameEn.invalid) {
+      this.form.controls.nameEn.markAsTouched();
+      this.messages.add({ severity: 'warn', summary: 'Event title is required', detail: 'Enter an English event title containing Latin characters before saving.', life: 3500 });
       return;
     }
 
-    const payload: CalendarEventPayload = { ...this.form.getRawValue(), imageName: this.imageName(), status };
-    const request = this.eventId !== null ? this.facade.update(this.eventId, payload) : this.facade.create(payload);
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.messages.add({ severity: 'warn', summary: 'Check the links', detail: 'Any link you provide must begin with http:// or https://.', life: 3500 });
+      return;
+    }
+
+    if (status === 'published' && !this.isPublishReady()) {
+      this.messages.add({
+        severity: 'warn',
+        summary: 'Complete the event before publishing',
+        detail: 'Arabic and English content, date, time, venue, category, description, and a cover image are required.',
+        life: 5000,
+      });
+      return;
+    }
+
+    const payload: CalendarEventPayload = { ...this.form.getRawValue(), coverImage: this.coverImage };
+    const request = this.eventId !== null
+      ? this.facade.update(this.eventId, payload, status)
+      : this.facade.create(payload, status);
 
     request.subscribe({
       next: () => {
-        this.messages.add({ severity: 'success', summary: this.isEditMode() ? 'Event updated' : 'Event created', detail: status === 'Published' ? 'Your event has been published.' : 'Your event was saved as a draft.', life: 3500 });
+        this.messages.add({ severity: 'success', summary: this.isEditMode() ? 'Event updated' : 'Event created', detail: status === 'published' ? 'Your event has been published.' : 'Your event was saved as a draft.', life: 3500 });
         this.router.navigateByUrl('/dashboard/events-calendar');
       },
     });
@@ -83,10 +111,39 @@ export class EventFormComponent implements OnInit {
     this.facade.getById(id).subscribe({
       next: (event) => {
         this.eventId = event.id;
-        this.form.patchValue({ title: event.title, date: event.date, category: event.category, place: event.place, eventLink: event.eventLink ?? '' });
-        this.imageName.set(event.imageName ?? '');
+        this.form.patchValue({
+          nameEn: event.nameEn,
+          nameAr: event.nameAr,
+          categoryEn: event.categoryEn,
+          categoryAr: event.categoryAr,
+          descriptionEn: event.descriptionEn,
+          descriptionAr: event.descriptionAr,
+          placeEn: event.placeEn,
+          placeAr: event.placeAr,
+          eventDate: event.eventDate,
+          eventTime: event.eventTime,
+          url: event.url,
+        });
+        this.imageName.set(event.coverImageUrl ? 'Current cover image' : '');
+        this.imagePreviewUrl.set(event.coverImageUrl);
       },
       error: () => this.router.navigateByUrl('/dashboard/events-calendar'),
     });
+  }
+
+  private isPublishReady(): boolean {
+    const value = this.form.getRawValue();
+    return [
+      value.nameEn,
+      value.nameAr,
+      value.categoryEn,
+      value.categoryAr,
+      value.descriptionEn,
+      value.descriptionAr,
+      value.placeEn,
+      value.placeAr,
+      value.eventDate,
+      value.eventTime,
+    ].every((field) => field.trim().length > 0) && Boolean(this.coverImage || this.imagePreviewUrl());
   }
 }

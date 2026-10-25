@@ -4,52 +4,86 @@
     <p>{{ isEditMode() ? 'Update your event details' : 'Create and publish new event' }}</p>
   </div>
 
-  <form class="event-form" [formGroup]="form" (ngSubmit)="save('Published')" novalidate>
+  <form class="event-form" [formGroup]="form" (ngSubmit)="save('published')" novalidate>
     <div class="form-grid">
       <div class="field">
-        <label for="title">Event Title</label>
-        <input id="title" type="text" formControlName="title" placeholder="Enter event title..." />
-        @if (form.controls.title.invalid && form.controls.title.touched) { <small>Event title is required.</small> }
+        <label for="name-en">Event Title <span>English</span></label>
+        <input id="name-en" type="text" formControlName="nameEn" placeholder="Enter event title in English..." />
+        @if (form.controls.nameEn.invalid && form.controls.nameEn.touched) { <small>An English title with Latin characters is required.</small> }
+      </div>
+
+      <div class="field">
+        <label for="name-ar">عنوان الفعالية <span>Arabic</span></label>
+        <input id="name-ar" type="text" formControlName="nameAr" placeholder="أدخل عنوان الفعالية بالعربية" dir="rtl" />
+      </div>
+
+      <div class="field">
+        <label for="category-en">Category <span>English</span></label>
+        <input id="category-en" type="text" formControlName="categoryEn" placeholder="Conference, workshop..." />
+      </div>
+
+      <div class="field">
+        <label for="category-ar">التصنيف <span>Arabic</span></label>
+        <input id="category-ar" type="text" formControlName="categoryAr" placeholder="مؤتمر، ورشة عمل..." dir="rtl" />
       </div>
 
       <div class="field">
         <label for="date">Date</label>
-        <input id="date" type="date" formControlName="date" />
-        @if (form.controls.date.invalid && form.controls.date.touched) { <small>Event date is required.</small> }
+        <input id="date" type="date" formControlName="eventDate" />
       </div>
 
       <div class="field">
-        <label for="category">Category</label>
-        <input id="category" type="text" formControlName="category" placeholder="Enter event category..." />
-        @if (form.controls.category.invalid && form.controls.category.touched) { <small>Category is required.</small> }
+        <label for="time">Time</label>
+        <input id="time" type="time" formControlName="eventTime" />
       </div>
 
       <div class="featured-image">
         <label>Featured Image</label>
         <label class="upload-area" for="event-image">
-          <input id="event-image" type="file" accept="image/png,image/jpeg" (change)="selectImage($event)" />
-          <i class="bi bi-cloud-arrow-up-fill"></i>
-          <strong>{{ imageName() || 'Click to upload image' }}</strong>
-          <span>PNG, JPG up to 10MB</span>
+          <input id="event-image" type="file" accept="image/png,image/jpeg,image/webp" (change)="selectImage($event)" />
+          @if (imagePreviewUrl()) {
+            <img class="image-preview" [src]="imagePreviewUrl()" [alt]="imageName() || 'Featured event image'" />
+            <span class="replace-image"><i class="bi bi-arrow-repeat"></i> Click to replace image</span>
+          } @else {
+            <i class="bi bi-cloud-arrow-up-fill"></i>
+            <strong>Click to upload image</strong>
+            <span>PNG, JPG, WEBP up to 10MB</span>
+          }
         </label>
       </div>
 
+      <div class="field"></div>
+
       <div class="field">
-        <label for="place">Place</label>
-        <input id="place" type="text" formControlName="place" placeholder="Enter place here..." />
-        @if (form.controls.place.invalid && form.controls.place.touched) { <small>Place is required.</small> }
+        <label for="place-en">Place <span>English</span></label>
+        <input id="place-en" type="text" formControlName="placeEn" placeholder="Enter venue name..." />
       </div>
 
       <div class="field">
+        <label for="place-ar">المكان <span>Arabic</span></label>
+        <input id="place-ar" type="text" formControlName="placeAr" placeholder="أدخل اسم المكان" dir="rtl" />
+      </div>
+
+      <div class="field full-width">
+        <label for="description-en">Description <span>English</span></label>
+        <textarea id="description-en" formControlName="descriptionEn" placeholder="Describe the event in English..."></textarea>
+      </div>
+
+      <div class="field full-width">
+        <label for="description-ar">الوصف <span>Arabic</span></label>
+        <textarea id="description-ar" formControlName="descriptionAr" placeholder="اكتب وصف الفعالية بالعربية..." dir="rtl"></textarea>
+      </div>
+
+      <div class="field full-width">
         <label for="event-link">Event Link <span>(optional)</span></label>
-        <input id="event-link" type="url" formControlName="eventLink" placeholder="https://example.com/event" />
-        @if (form.controls.eventLink.invalid && form.controls.eventLink.touched) { <small>Enter a valid URL beginning with http:// or https://.</small> }
+        <input id="event-link" type="url" formControlName="url" placeholder="https://example.com/event" />
+        @if (form.controls.url.invalid && form.controls.url.touched) { <small>Enter a valid http:// or https:// URL.</small> }
       </div>
     </div>
 
     <div class="form-actions">
       <button type="button" class="cancel" (click)="cancel()">Cancel</button>
-      <button type="button" class="draft" (click)="save('Draft')">Save as a Draft</button>
+      <button type="button" class="draft" (click)="save('draft')">Save as a Draft</button>
       <button type="submit" class="publish"><i class="bi bi-send-fill"></i> Publish Event</button>
     </div>
   </form>

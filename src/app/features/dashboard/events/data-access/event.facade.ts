@@ -1,21 +1,25 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { tap } from 'rxjs';
+import { Observable, switchMap, tap } from 'rxjs';
 import { EntityId } from '../../../../core/data-access/crud-repository';
-import { CalendarEvent, CalendarEventPayload } from './event.model';
-import { EVENT_REPOSITORY } from './event.repository';
+import { CalendarEvent, CalendarEventPayload, EventStatus } from './event.model';
+import { EventListRequest, EVENT_REPOSITORY } from './event.repository';
 
 @Injectable({ providedIn: 'root' })
 export class EventFacade {
   private readonly repository = inject(EVENT_REPOSITORY);
 
   readonly events = signal<CalendarEvent[]>([]);
+  readonly totalRecords = signal(0);
   readonly loading = signal(false);
 
-  load() {
+  load(request: EventListRequest = { page: 1, pageSize: 10 }) {
     this.loading.set(true);
-    return this.repository.list().pipe(
+    return this.repository.list(request).pipe(
       tap({
-        next: (events) => this.events.set(events),
+        next: ({ items, totalRecords }) => {
+          this.events.set(items);
+          this.totalRecords.set(totalRecords);
+        },
         finalize: () => this.loading.set(false),
       }),
     );
@@ -25,15 +29,24 @@ export class EventFacade {
     return this.repository.getById(id);
   }
 
-  create(payload: CalendarEventPayload) {
-    return this.repository.create(payload).pipe(tap(() => this.load().subscribe()));
+  create(payload: CalendarEventPayload, status: EventStatus): Observable<CalendarEvent> {
+    return this.repository.create(payload).pipe(
+      switchMap((event) => (status === 'published' ? this.repository.publish(event.id) : [event])),
+      tap(() => this.load().subscribe()),
+    );
   }
 
-  update(id: EntityId, payload: CalendarEventPayload) {
-    return this.repository.update(id, payload).pipe(tap(() => this.load().subscribe()));
+  update(id: EntityId, payload: CalendarEventPayload, status: EventStatus): Observable<CalendarEvent> {
+    return this.repository.update(id, payload).pipe(
+      switchMap((event) => {
+        if (status === 'published') return this.repository.publish(id);
+        return event.status === 'published' ? this.repository.unpublish(id) : [event];
+      }),
+      tap(() => this.load().subscribe()),
+    );
   }
 
   remove(id: EntityId) {
-    return this.repository.remove(id).pipe(tap(() => this.load().subscribe()));
+    return this.repository.remove(id);
   }
 }
