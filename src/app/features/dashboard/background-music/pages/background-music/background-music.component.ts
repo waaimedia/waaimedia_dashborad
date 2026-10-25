@@ -6,11 +6,19 @@ import { BackgroundMusicFacade } from '../../data-access/background-music.facade
 import { BackgroundMusicUpdate } from '../../data-access/background-music.model';
 
 const MAX_AUDIO_FILE_SIZE = 15 * 1024 * 1024;
-const ADDITIONAL_AUDIO_TYPES = [
-  'application/ogg',
-  'application/x-ogg',
-  'application/vnd.apple.mpegurl',
-];
+const AUDIO_EXTENSIONS = new Set([
+  'mp3',
+  'wav',
+  'ogg',
+  'm4a',
+  'aac',
+  'flac',
+  'opus',
+  'aiff',
+  'aif',
+  'wma',
+  'webm',
+]);
 
 @Component({
   selector: 'app-background-music',
@@ -45,13 +53,25 @@ export class BackgroundMusicComponent implements OnInit, OnDestroy {
   }
 
   protected selectAudio(event: Event): void {
-    const file = (event.target as HTMLInputElement).files?.[0];
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
     if (!file) return;
-    if (!this.isAudioFile(file) || file.size > MAX_AUDIO_FILE_SIZE) {
+    if (!this.isAudioFile(file)) {
+      input.value = '';
       this.messages.add({
         severity: 'warn',
         summary: 'Invalid audio file',
-        detail: 'Choose a valid audio file up to 15 MiB.',
+        detail: 'Choose a genuine audio file (MP3, WAV, OGG, M4A, AAC, FLAC, or another supported format).',
+        life: 4000,
+      });
+      return;
+    }
+    if (file.size > MAX_AUDIO_FILE_SIZE) {
+      input.value = '';
+      this.messages.add({
+        severity: 'warn',
+        summary: 'File is too large',
+        detail: 'Choose an audio file no larger than 15 MiB.',
         life: 4000,
       });
       return;
@@ -113,7 +133,11 @@ export class BackgroundMusicComponent implements OnInit, OnDestroy {
   }
 
   private isAudioFile(file: File): boolean {
-    return file.type.startsWith('audio/') || ADDITIONAL_AUDIO_TYPES.includes(file.type);
+    if (file.type.startsWith('audio/') || file.type === 'application/ogg') return true;
+
+    // Some browsers leave File.type empty for otherwise valid audio formats.
+    const extension = file.name.split('.').pop()?.toLowerCase();
+    return extension !== undefined && AUDIO_EXTENSIONS.has(extension);
   }
 
   private revokePreviewUrl(): void {
