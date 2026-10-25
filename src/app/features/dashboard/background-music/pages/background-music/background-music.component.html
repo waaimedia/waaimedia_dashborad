@@ -11,7 +11,7 @@
       <input
         id="background-audio"
         type="file"
-        accept="audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/x-m4a"
+        accept="audio/*,.ogg,.opus,.m4a,.aac,.flac,.aiff,.wma,.midi,.au,.webm"
         (change)="selectAudio($event)"
       />
       <i class="bi bi-cloud-arrow-up-fill"></i>
@@ -19,19 +19,18 @@
         <strong>{{ fileName() }}</strong
         ><span>Click to replace audio</span>
       } @else {
-        <strong>Click to upload music</strong><span>MP3, WAV, OGG, or M4A up to 15MB</span>
+        <strong>Click to upload music</strong><span>Any supported audio format up to 15 MiB</span>
       }
     </label>
     @if (sourceUrl()) {
       <section class="audio-preview">
         <div><i class="bi bi-soundwave"></i><span>Audio Preview</span></div>
-        <audio
-          controls
-          [src]="sourceUrl()"
-          [loop]="form.controls.loop.value"
-          [volume]="form.controls.volume.value / 100"
-        ></audio
-        ><button type="button" (click)="removeAudio()"><i class="bi bi-trash3"></i> Remove</button>
+        <audio controls [src]="sourceUrl()" [loop]="form.controls.loop.value"></audio>
+        @if (selectedFile()) {
+          <button type="button" (click)="discardSelectedAudio()">
+            <i class="bi bi-x-lg"></i> Discard selection
+          </button>
+        }
       </section>
     }
     <section class="settings">

@@ -1,59 +1,102 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { DashboardHeaderService } from '../../../layout/dashboard-header.service';
 import { BackgroundMusicFacade } from '../../data-access/background-music.facade';
-import { BackgroundMusicSettings } from '../../data-access/background-music.model';
+import { BackgroundMusicUpdate } from '../../data-access/background-music.model';
 
-const ACCEPTED_AUDIO_TYPES = ['audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp4', 'audio/x-m4a'];
+const MAX_AUDIO_FILE_SIZE = 15 * 1024 * 1024;
+const ADDITIONAL_AUDIO_TYPES = [
+  'application/ogg',
+  'application/x-ogg',
+  'application/vnd.apple.mpegurl',
+];
 
-@Component({ selector: 'app-background-music', imports: [ReactiveFormsModule], templateUrl: './background-music.component.html', styleUrl: './background-music.component.scss' })
-export class BackgroundMusicComponent implements OnInit {
+@Component({
+  selector: 'app-background-music',
+  imports: [ReactiveFormsModule],
+  templateUrl: './background-music.component.html',
+  styleUrl: './background-music.component.scss',
+})
+export class BackgroundMusicComponent implements OnInit, OnDestroy {
   private readonly formBuilder = inject(FormBuilder);
   private readonly facade = inject(BackgroundMusicFacade);
   private readonly header = inject(DashboardHeaderService);
   private readonly messages = inject(MessageService);
   protected readonly sourceUrl = signal('');
   protected readonly fileName = signal('');
-  protected readonly form = this.formBuilder.nonNullable.group({ enabled: [false], loop: [true], volume: [30] });
+  protected readonly hasTrack = signal(false);
+  protected readonly selectedFile = signal<File | null>(null);
+  protected readonly form = this.formBuilder.nonNullable.group({ enabled: [false], loop: [false] });
+  private previewObjectUrl: string | null = null;
 
   ngOnInit(): void {
     this.header.showBackgroundMusic();
     this.facade.load().subscribe((settings) => {
       this.sourceUrl.set(settings.sourceUrl);
       this.fileName.set(settings.fileName);
-      this.form.patchValue({ enabled: settings.enabled, loop: settings.loop, volume: settings.volume });
+      this.hasTrack.set(settings.hasTrack);
+      this.form.patchValue({ enabled: settings.enabled, loop: settings.loop });
     });
+  }
+
+  ngOnDestroy(): void {
+    this.revokePreviewUrl();
   }
 
   protected selectAudio(event: Event): void {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (!file) return;
-    if (!ACCEPTED_AUDIO_TYPES.includes(file.type) || file.size > 15 * 1024 * 1024) {
-      this.messages.add({ severity: 'warn', summary: 'Invalid audio file', detail: 'Use an MP3, WAV, OGG, or M4A file up to 15MB.', life: 4000 });
+    if (!this.isAudioFile(file) || file.size > MAX_AUDIO_FILE_SIZE) {
+      this.messages.add({
+        severity: 'warn',
+        summary: 'Invalid audio file',
+        detail: 'Choose a valid audio file up to 15 MiB.',
+        life: 4000,
+      });
       return;
     }
-    const reader = new FileReader();
-    reader.onload = () => this.sourceUrl.set(String(reader.result));
-    reader.readAsDataURL(file);
+    this.revokePreviewUrl();
+    this.previewObjectUrl = URL.createObjectURL(file);
+    this.sourceUrl.set(this.previewObjectUrl);
     this.fileName.set(file.name);
+    this.selectedFile.set(file);
   }
 
-  protected removeAudio(): void {
-    this.sourceUrl.set('');
-    this.fileName.set('');
-    this.form.controls.enabled.setValue(false);
+  protected discardSelectedAudio(): void {
+    this.revokePreviewUrl();
+    this.selectedFile.set(null);
+    const settings = this.facade.settings();
+    this.sourceUrl.set(settings?.sourceUrl ?? '');
+    this.fileName.set(settings?.fileName ?? '');
   }
 
   protected save(): void {
-    if (this.form.controls.enabled.value && !this.sourceUrl()) {
-      this.messages.add({ severity: 'warn', summary: 'Add music first', detail: 'Upload an audio file before enabling background music.', life: 3500 });
+    if (this.form.controls.enabled.value && !this.hasTrack() && !this.selectedFile()) {
+      this.messages.add({
+        severity: 'warn',
+        summary: 'Add music first',
+        detail: 'Upload an audio file before enabling background music.',
+        life: 3500,
+      });
       return;
     }
     const values = this.form.getRawValue();
-    const settings: BackgroundMusicSettings = { sourceUrl: this.sourceUrl(), fileName: this.fileName(), ...values };
-    this.facade.save(settings).subscribe(() => {
-      this.messages.add({ severity: 'success', summary: 'Background music saved', detail: settings.enabled ? 'Background music is enabled for the website.' : 'Background music is currently disabled.', life: 3500 });
+    const update: BackgroundMusicUpdate = { ...values, audioFile: this.selectedFile() };
+    this.facade.save(update).subscribe((settings) => {
+      this.revokePreviewUrl();
+      this.selectedFile.set(null);
+      this.sourceUrl.set(settings.sourceUrl);
+      this.fileName.set(settings.fileName);
+      this.hasTrack.set(settings.hasTrack);
+      this.messages.add({
+        severity: 'success',
+        summary: 'Background music saved',
+        detail: settings.enabled
+          ? 'Background music is enabled for the website.'
+          : 'Background music is currently disabled.',
+        life: 3500,
+      });
       this.form.markAsPristine();
     });
   }
@@ -61,8 +104,20 @@ export class BackgroundMusicComponent implements OnInit {
   protected cancel(): void {
     const settings = this.facade.settings();
     if (!settings) return;
+    this.revokePreviewUrl();
+    this.selectedFile.set(null);
     this.sourceUrl.set(settings.sourceUrl);
     this.fileName.set(settings.fileName);
-    this.form.reset({ enabled: settings.enabled, loop: settings.loop, volume: settings.volume });
+    this.hasTrack.set(settings.hasTrack);
+    this.form.reset({ enabled: settings.enabled, loop: settings.loop });
+  }
+
+  private isAudioFile(file: File): boolean {
+    return file.type.startsWith('audio/') || ADDITIONAL_AUDIO_TYPES.includes(file.type);
+  }
+
+  private revokePreviewUrl(): void {
+    if (this.previewObjectUrl) URL.revokeObjectURL(this.previewObjectUrl);
+    this.previewObjectUrl = null;
   }
 }
