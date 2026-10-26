@@ -35,17 +35,16 @@ export class BackgroundMusicApiRepository implements BackgroundMusicRepository {
     const body = new FormData();
     body.append('is_enabled', String(update.enabled));
     body.append('is_loop', String(update.loop));
+    // Multipart PUT requests are not parsed consistently by the API stack.
+    // Use Laravel's method override while keeping the request multipart.
+    body.append('_method', 'PUT');
     if (update.audioFile) {
       body.append('audio_file', update.audioFile, update.audioFile.name);
     }
 
-    // The backend uses POST for multipart uploads/replacements and PUT only for
-    // settings changes. Sending a file through PUT is not part of its contract.
-    const request = update.audioFile
-      ? this.http.post<BackgroundMusicResponse>(this.url, body)
-      : this.http.put<BackgroundMusicResponse>(this.url, body);
-
-    return request.pipe(map(({ data }) => this.toSettings(data)));
+    return this.http
+      .post<BackgroundMusicResponse>(this.url, body)
+      .pipe(map(({ data }) => this.toSettings(data)));
   }
 
   private toSettings(data: ApiBackgroundMusic): BackgroundMusicSettings {
