@@ -23,6 +23,21 @@ textarea {
   font-family: inherit;
 }
 
+/* Keep management tables readable when the dashboard content area is narrow. */
+.dashboard-main :is(
+  table,
+  .articles-table,
+  .events-table,
+  .portfolio-table,
+  .team-table,
+  .clients-table
+) {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
 @media (max-width: 640px) {
   .p-toast-message-content {
     align-items: flex-start;

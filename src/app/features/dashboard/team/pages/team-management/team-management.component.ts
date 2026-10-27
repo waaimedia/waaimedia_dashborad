@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { PaginationComponent } from '../../../../../shared/ui/pagination/pagination.component';
@@ -22,17 +22,14 @@ export class TeamManagementComponent implements OnInit {
   private readonly auth = inject(AuthService);
 
   protected readonly page = signal(1);
-  protected readonly pageSize = 4;
+  protected readonly pageSize = 10;
   protected readonly members = this.facade.members;
-  protected readonly canDelete = () => this.auth.hasRole('admin');
-  protected readonly paginatedMembers = computed(() => {
-    const start = (this.page() - 1) * this.pageSize;
-    return this.members().slice(start, start + this.pageSize);
-  });
+  protected readonly totalRecords = this.facade.totalRecords;
+  protected readonly canDelete = () => this.auth.hasRole('super_admin', 'admin');
 
   ngOnInit(): void {
     this.header.showTeamList();
-    this.facade.load().subscribe();
+    this.loadPage(1);
   }
 
   protected addMember(): void {
@@ -40,11 +37,12 @@ export class TeamManagementComponent implements OnInit {
   }
 
   protected changePage(page: number): void {
-    this.page.set(page);
+    if (!Number.isInteger(page) || page < 1) return;
+    this.loadPage(page);
   }
 
   protected deleteMember(member: TeamMember): void {
-    if (!this.auth.hasRole('admin')) return;
+    if (!this.canDelete()) return;
     this.confirmation.confirm({
       header: 'Delete team member?',
       message: `“${member.fullName}” will be permanently removed from the team.`,
@@ -54,7 +52,7 @@ export class TeamManagementComponent implements OnInit {
       accept: () => {
         this.facade.remove(member.id).subscribe({
           next: () => {
-            this.page.set(1);
+            this.loadPage(1);
             this.messages.add({
               severity: 'success',
               summary: 'Member deleted',
@@ -65,5 +63,10 @@ export class TeamManagementComponent implements OnInit {
         });
       },
     });
+  }
+
+  private loadPage(page: number): void {
+    this.page.set(page);
+    this.facade.load({ page, pageSize: this.pageSize }).subscribe();
   }
 }

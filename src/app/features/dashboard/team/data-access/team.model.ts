@@ -11,6 +11,5 @@ export interface TeamMember {
 export interface TeamMemberPayload {
   fullName: string;
   role: string;
-  photoUrl?: string;
-  photoName?: string;
+  photo?: File;
 }

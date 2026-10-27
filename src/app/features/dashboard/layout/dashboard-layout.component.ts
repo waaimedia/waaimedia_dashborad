@@ -9,7 +9,7 @@ interface NavigationItem {
   icon: string;
   label: string;
   route?: string;
-  roles?: ('admin' | 'editor')[];
+  roles?: ('super_admin' | 'admin' | 'editor')[];
 }
 
 @Component({
@@ -33,7 +33,7 @@ export class DashboardLayoutComponent {
     { icon: 'bi-person-workspace', label: 'Clients', route: '/dashboard/clients' },
     { icon: 'bi-calendar3', label: 'Events Calendar', route: '/dashboard/events-calendar' },
     { icon: 'bi-layout-text-sidebar-reverse', label: 'Blogs', route: '/dashboard/blogs' },
-    { icon: 'bi-person-gear', label: 'Users', route: '/dashboard/users', roles: ['admin'] },
+    { icon: 'bi-person-gear', label: 'Users', route: '/dashboard/users', roles: ['super_admin', 'admin'] },
     { icon: 'bi-person-vcard', label: 'Contact Info', route: '/dashboard/contact-info' },
     { icon: 'bi-phone', label: 'App Links', route: '/dashboard/app-links' },
     { icon: 'bi-music-note-beamed', label: 'Background Music', route: '/dashboard/background-music' },

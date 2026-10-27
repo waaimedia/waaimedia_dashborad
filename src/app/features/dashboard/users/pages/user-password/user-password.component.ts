@@ -29,7 +29,7 @@ export class UserPasswordComponent implements OnInit {
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (!Number.isFinite(id)) {
-      this.router.navigateByUrl('/dashboard/users');
+      void this.router.navigateByUrl('/dashboard/users');
       return;
     }
 
@@ -39,7 +39,7 @@ export class UserPasswordComponent implements OnInit {
         this.userName.set(user.name);
         this.header.showUserPassword(user.name);
       },
-      error: () => this.router.navigateByUrl('/dashboard/users'),
+      error: () => void this.router.navigateByUrl('/dashboard/users'),
     });
   }
 
@@ -61,17 +61,15 @@ export class UserPasswordComponent implements OnInit {
       return;
     }
 
-    this.facade.getById(this.userId).subscribe({
-      next: (user) => this.facade.update(user.id, { name: user.name, email: user.email, password: this.form.controls.password.value }).subscribe({
-        next: () => {
-          this.messages.add({ severity: 'success', summary: 'Password updated', detail: `Password changed for ${user.name}.`, life: 3500 });
-          this.router.navigateByUrl('/dashboard/users');
-        },
-      }),
+    this.facade.resetPassword(this.userId, this.form.controls.password.value, this.form.controls.confirmPassword.value).subscribe({
+      next: () => {
+        this.messages.add({ severity: 'success', summary: 'Password updated', detail: `Password changed for ${this.userName()}.`, life: 3500 });
+        void this.router.navigateByUrl('/dashboard/users');
+      },
     });
   }
 
   protected cancel(): void {
-    this.router.navigateByUrl('/dashboard/users');
+    void this.router.navigateByUrl('/dashboard/users');
   }
 }

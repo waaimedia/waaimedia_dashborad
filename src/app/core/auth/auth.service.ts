@@ -6,7 +6,7 @@ import { environment } from '../../../environments/environment';
 const ACCESS_TOKEN_KEY = 'waai-media-access-token';
 const USER_KEY = 'waai-media-user';
 
-export type UserRole = 'admin' | 'editor';
+export type UserRole = 'super_admin' | 'admin' | 'editor';
 
 export interface AuthUser {
   id: number;
@@ -155,7 +155,7 @@ export class AuthService {
       typeof candidate.id === 'number' &&
       typeof candidate.name === 'string' &&
       typeof candidate.email === 'string' &&
-      (candidate.role === 'admin' || candidate.role === 'editor')
+      (candidate.role === 'super_admin' || candidate.role === 'admin' || candidate.role === 'editor')
     );
   }
 }

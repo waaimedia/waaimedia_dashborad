@@ -11,7 +11,7 @@ import { httpErrorInterceptor } from './core/http/http-error.interceptor';
 import { loadingInterceptor } from './core/http/loading.interceptor';
 import { NewsMockRepository } from './features/dashboard/news/data-access/news-mock.repository';
 import { NEWS_REPOSITORY } from './features/dashboard/news/data-access/news.repository';
-import { TeamMockRepository } from './features/dashboard/team/data-access/team-mock.repository';
+import { TeamApiRepository } from './features/dashboard/team/data-access/team-api.repository';
 import { TEAM_REPOSITORY } from './features/dashboard/team/data-access/team.repository';
 import { CountersApiRepository } from './features/dashboard/counters/data-access/counters-api.repository';
 import { COUNTERS_REPOSITORY } from './features/dashboard/counters/data-access/counters.repository';
@@ -25,7 +25,7 @@ import { AppLinksApiRepository } from './features/dashboard/app-links/data-acces
 import { APP_LINKS_REPOSITORY } from './features/dashboard/app-links/data-access/app-links.repository';
 import { BlogMockRepository } from './features/dashboard/blogs/data-access/blog-mock.repository';
 import { BLOG_REPOSITORY } from './features/dashboard/blogs/data-access/blog.repository';
-import { UserMockRepository } from './features/dashboard/users/data-access/user-mock.repository';
+import { UserApiRepository } from './features/dashboard/users/data-access/user-api.repository';
 import { USER_REPOSITORY } from './features/dashboard/users/data-access/user.repository';
 import { BackgroundMusicApiRepository } from './features/dashboard/background-music/data-access/background-music-api.repository';
 import { BACKGROUND_MUSIC_REPOSITORY } from './features/dashboard/background-music/data-access/background-music.repository';
@@ -43,8 +43,7 @@ export const appConfig: ApplicationConfig = {
     ConfirmationService,
     // Replace NewsMockRepository with the API implementation when endpoints are ready.
     { provide: NEWS_REPOSITORY, useExisting: NewsMockRepository },
-    // Replace TeamMockRepository with the API implementation when endpoints are ready.
-    { provide: TEAM_REPOSITORY, useExisting: TeamMockRepository },
+    { provide: TEAM_REPOSITORY, useExisting: TeamApiRepository },
     { provide: COUNTERS_REPOSITORY, useExisting: CountersApiRepository },
     // Replace ClientMockRepository with the API implementation when endpoints are ready.
     { provide: CLIENT_REPOSITORY, useExisting: ClientMockRepository },
@@ -53,8 +52,7 @@ export const appConfig: ApplicationConfig = {
     { provide: APP_LINKS_REPOSITORY, useExisting: AppLinksApiRepository },
     // Replace BlogMockRepository with the API implementation when endpoints are ready.
     { provide: BLOG_REPOSITORY, useExisting: BlogMockRepository },
-    // Replace UserMockRepository with the API implementation when endpoints are ready.
-    { provide: USER_REPOSITORY, useExisting: UserMockRepository },
+    { provide: USER_REPOSITORY, useExisting: UserApiRepository },
     { provide: BACKGROUND_MUSIC_REPOSITORY, useExisting: BackgroundMusicApiRepository },
     // Replace PortfolioMockRepository with the API implementation when endpoints are ready.
     { provide: PORTFOLIO_REPOSITORY, useExisting: PortfolioMockRepository },

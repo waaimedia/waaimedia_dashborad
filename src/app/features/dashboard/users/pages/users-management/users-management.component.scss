@@ -1,5 +1,6 @@
 @use '../../../team/pages/team-management/team-management.component.scss';
 
-.users-table__head, .users-row { grid-template-columns: minmax(14rem, 1fr) minmax(18rem, 1.4fr) 10rem; }
+.users-table__head, .users-row { grid-template-columns: minmax(12rem, 1fr) minmax(16rem, 1.4fr) 10rem 10rem; }
+.user-role { color: #566277; text-transform: capitalize; }
 
-@media (max-width: 900px) { .users-row { grid-template-columns: minmax(0, 1fr) auto; }.users-row .member-role { grid-column: 1; grid-row: 2; }.users-row .member-actions { grid-column: 2; grid-row: 1; } }
+@media (max-width: 900px) { .users-row { grid-template-columns: minmax(0, 1fr) auto; }.users-row .member-role { grid-column: 1; grid-row: 2; }.users-row .user-role { grid-column: 1; grid-row: 3; }.users-row .member-actions { grid-column: 2; grid-row: 1; } }

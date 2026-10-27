@@ -14,7 +14,7 @@
         <span>Actions</span>
       </div>
 
-      @for (member of paginatedMembers(); track member.id) {
+      @for (member of members(); track member.id) {
         <article class="team-row">
           <div class="member-photo">
             @if (member.photoUrl) {
@@ -44,7 +44,7 @@
     <app-pagination
       [page]="page()"
       [pageSize]="pageSize"
-      [totalRecords]="members().length"
+      [totalRecords]="totalRecords()"
       (pageChange)="changePage($event)"
     />
   </article>

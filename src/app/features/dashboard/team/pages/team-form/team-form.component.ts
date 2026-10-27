@@ -24,6 +24,7 @@ export class TeamFormComponent implements OnInit {
   protected readonly isEditMode = signal(false);
   protected readonly photoPreview = signal('');
   protected readonly photoName = signal('');
+  private readonly photo = signal<File | undefined>(undefined);
   protected readonly form = this.formBuilder.nonNullable.group({
     fullName: ['', [Validators.required, Validators.maxLength(100)]],
     role: ['', [Validators.required, Validators.maxLength(100)]],
@@ -60,6 +61,7 @@ export class TeamFormComponent implements OnInit {
     const reader = new FileReader();
     reader.onload = () => this.photoPreview.set(String(reader.result));
     reader.readAsDataURL(file);
+    this.photo.set(file);
     this.photoName.set(file.name);
   }
 
@@ -77,8 +79,7 @@ export class TeamFormComponent implements OnInit {
 
     const payload: TeamMemberPayload = {
       ...this.form.getRawValue(),
-      photoUrl: this.photoPreview() || undefined,
-      photoName: this.photoName() || undefined,
+      photo: this.photo(),
     };
     const request = this.memberId !== null ? this.facade.update(this.memberId, payload) : this.facade.create(payload);
 
@@ -90,13 +91,13 @@ export class TeamFormComponent implements OnInit {
           detail: 'The team member has been saved successfully.',
           life: 3500,
         });
-        this.router.navigateByUrl('/dashboard/team');
+        void this.router.navigateByUrl('/dashboard/team');
       },
     });
   }
 
   protected cancel(): void {
-    this.router.navigateByUrl('/dashboard/team');
+    void this.router.navigateByUrl('/dashboard/team');
   }
 
   private loadMember(id: number): void {
@@ -105,9 +106,9 @@ export class TeamFormComponent implements OnInit {
         this.memberId = member.id;
         this.form.patchValue({ fullName: member.fullName, role: member.role });
         this.photoPreview.set(member.photoUrl ?? '');
-        this.photoName.set(member.photoName ?? '');
+        this.photoName.set('');
       },
-      error: () => this.router.navigateByUrl('/dashboard/team'),
+      error: () => void this.router.navigateByUrl('/dashboard/team'),
     });
   }
 }
