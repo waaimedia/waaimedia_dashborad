@@ -43,9 +43,12 @@ describe('BackgroundMusicApiRepository', () => {
 
     const request = httpTesting.expectOne(url);
     const body = request.request.body as FormData;
+    const uploadedFile = body.get('audio_file');
     expect(request.request.method).toBe('POST');
     expect(body.get('_method')).toBe('PUT');
-    expect(body.get('audio_file')).toBe(file);
+    expect(uploadedFile).toBeInstanceOf(File);
+    expect((uploadedFile as File).name).toBe(file.name);
+    expect((uploadedFile as File).type).toBe(file.type);
 
     request.flush({ data: responseData() });
   });

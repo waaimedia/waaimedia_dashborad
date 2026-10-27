@@ -44,11 +44,12 @@ export class TeamApiRepository implements TeamRepository {
 
   update(id: EntityId, payload: TeamMemberPayload): Observable<TeamMember> {
     const body = this.toRequestBody(payload);
-    const request = payload.photo
-      ? this.http.post<ApiResourceResponse>(`${this.url}/${id}`, body)
-      : this.http.patch<ApiResourceResponse>(`${this.url}/${id}`, body);
+    if (body instanceof FormData) {
+      body.append('_method', 'PATCH');
+      return this.http.post<ApiResourceResponse>(`${this.url}/${id}`, body).pipe(map(({ data }) => this.toTeamMember(data)));
+    }
 
-    return request.pipe(map(({ data }) => this.toTeamMember(data)));
+    return this.http.patch<ApiResourceResponse>(`${this.url}/${id}`, body).pipe(map(({ data }) => this.toTeamMember(data)));
   }
 
   remove(id: EntityId): Observable<void> {

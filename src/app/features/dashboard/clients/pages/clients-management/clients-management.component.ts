@@ -24,7 +24,7 @@ export class ClientsManagementComponent implements OnInit {
   protected readonly page = signal(1);
   protected readonly pageSize = 4;
   protected readonly clients = this.facade.clients;
-  protected readonly canDelete = () => this.auth.hasRole('admin');
+  protected readonly canDelete = () => this.auth.canDeleteContent();
   protected readonly paginatedClients = computed(() => {
     const start = (this.page() - 1) * this.pageSize;
     return this.clients().slice(start, start + this.pageSize);
@@ -44,7 +44,7 @@ export class ClientsManagementComponent implements OnInit {
   }
 
   protected deleteClient(client: Client): void {
-    if (!this.auth.hasRole('admin')) return;
+    if (!this.auth.canDeleteContent()) return;
     this.confirmation.confirm({
       header: 'Delete client?',
       message: `“${client.fullName}” will be permanently removed from your clients.`,

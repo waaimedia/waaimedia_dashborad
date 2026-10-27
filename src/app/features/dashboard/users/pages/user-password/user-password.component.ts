@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { AuthService } from '../../../../../core/auth/auth.service';
 import { DashboardHeaderService } from '../../../layout/dashboard-header.service';
 import { UserFacade } from '../../data-access/user.facade';
 
@@ -18,6 +19,7 @@ export class UserPasswordComponent implements OnInit {
   private readonly messages = inject(MessageService);
   private readonly header = inject(DashboardHeaderService);
   private readonly facade = inject(UserFacade);
+  private readonly auth = inject(AuthService);
 
   private userId: number | string | null = null;
   protected readonly userName = signal('');
@@ -35,6 +37,11 @@ export class UserPasswordComponent implements OnInit {
 
     this.facade.getById(id).subscribe({
       next: (user) => {
+        if (!this.auth.canManageUser(user.role)) {
+          void this.router.navigateByUrl('/dashboard/users');
+          return;
+        }
+
         this.userId = user.id;
         this.userName.set(user.name);
         this.header.showUserPassword(user.name);

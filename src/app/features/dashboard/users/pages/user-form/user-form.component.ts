@@ -29,5 +29,19 @@ export class UserFormComponent implements OnInit {
     request.subscribe({ next: () => { this.messages.add({ severity: 'success', summary: this.isEditMode() ? 'User updated' : 'User added', detail: 'The user has been saved successfully.', life: 3500 }); void this.router.navigateByUrl('/dashboard/users'); } });
   }
   protected cancel(): void { void this.router.navigateByUrl('/dashboard/users'); }
-  private loadUser(id: number): void { this.facade.getById(id).subscribe({ next: (user) => { this.userId = user.id; this.originalRole = user.role; this.form.patchValue({ name: user.name, email: user.email, role: user.role === 'super_admin' ? 'editor' : user.role }); }, error: () => void this.router.navigateByUrl('/dashboard/users') }); }
+  private loadUser(id: number): void {
+    this.facade.getById(id).subscribe({
+      next: (user) => {
+        if (!this.auth.canManageUser(user.role)) {
+          void this.router.navigateByUrl('/dashboard/users');
+          return;
+        }
+
+        this.userId = user.id;
+        this.originalRole = user.role;
+        this.form.patchValue({ name: user.name, email: user.email, role: user.role === 'super_admin' ? 'editor' : user.role });
+      },
+      error: () => void this.router.navigateByUrl('/dashboard/users'),
+    });
+  }
 }

@@ -35,7 +35,7 @@ export class EventsManagementComponent implements OnInit {
   ];
   protected readonly events = this.facade.events;
   protected readonly totalRecords = this.facade.totalRecords;
-  protected readonly canDelete = () => this.auth.hasRole('admin');
+  protected readonly canDelete = () => this.auth.canDeleteContent();
   protected readonly filteredEvents = computed(() => {
     const query = this.query().trim().toLowerCase();
     const status = this.status();
@@ -77,7 +77,7 @@ export class EventsManagementComponent implements OnInit {
   }
 
   protected deleteEvent(event: CalendarEvent): void {
-    if (!this.auth.hasRole('admin')) return;
+    if (!this.auth.canDeleteContent()) return;
     this.confirmation.confirm({
       header: 'Delete event?',
       message: `“${event.nameEn}” will be permanently deleted.`,

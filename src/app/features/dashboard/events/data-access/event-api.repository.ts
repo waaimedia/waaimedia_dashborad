@@ -69,7 +69,13 @@ export class EventApiRepository implements EventRepository {
   }
 
   update(id: EntityId, payload: CalendarEventPayload): Observable<CalendarEvent> {
-    return this.http.patch<ApiResourceResponse>(`${this.url}/${id}`, this.toRequestBody(payload)).pipe(map(({ data }) => this.toEvent(data)));
+    const body = this.toRequestBody(payload);
+    if (body instanceof FormData) {
+      body.append('_method', 'PATCH');
+      return this.http.post<ApiResourceResponse>(`${this.url}/${id}`, body).pipe(map(({ data }) => this.toEvent(data)));
+    }
+
+    return this.http.patch<ApiResourceResponse>(`${this.url}/${id}`, body).pipe(map(({ data }) => this.toEvent(data)));
   }
 
   publish(id: EntityId): Observable<CalendarEvent> {

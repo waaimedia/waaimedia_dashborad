@@ -54,6 +54,25 @@ export class AuthService {
     return !!user && roles.includes(user.role);
   }
 
+  /**
+   * Determines whether the signed-in user can manage a dashboard user with
+   * the supplied role. This policy is intentionally role-based: a
+   * super-admin can manage admins and editors, while an admin can manage
+   * editors only.
+   */
+  canManageUser(targetRole: UserRole): boolean {
+    const actorRole = this.currentUser()?.role;
+    return (
+      (actorRole === 'super_admin' && (targetRole === 'admin' || targetRole === 'editor')) ||
+      (actorRole === 'admin' && targetRole === 'editor')
+    );
+  }
+
+  /** Editors can edit content, but deletion is reserved for admins. */
+  canDeleteContent(): boolean {
+    return this.hasRole('super_admin', 'admin');
+  }
+
   getAccessToken(): string | null {
     return this.getActiveStorage()?.getItem(ACCESS_TOKEN_KEY) ?? null;
   }

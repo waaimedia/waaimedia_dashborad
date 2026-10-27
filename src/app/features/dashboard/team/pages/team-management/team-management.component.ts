@@ -25,7 +25,7 @@ export class TeamManagementComponent implements OnInit {
   protected readonly pageSize = 10;
   protected readonly members = this.facade.members;
   protected readonly totalRecords = this.facade.totalRecords;
-  protected readonly canDelete = () => this.auth.hasRole('super_admin', 'admin');
+  protected readonly canDelete = () => this.auth.canDeleteContent();
 
   ngOnInit(): void {
     this.header.showTeamList();

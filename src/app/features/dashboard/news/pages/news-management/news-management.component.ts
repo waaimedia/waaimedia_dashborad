@@ -43,7 +43,7 @@ export class NewsManagementComponent implements OnInit {
     ...NEWS_CATEGORIES.map((category) => ({ label: category, value: category })),
   ];
   protected readonly articles = this.facade.articles;
-  protected readonly canDelete = () => this.auth.hasRole('admin');
+  protected readonly canDelete = () => this.auth.canDeleteContent();
 
   protected readonly filteredArticles = computed(() => {
     const query = this.query().trim().toLowerCase();
@@ -97,7 +97,7 @@ export class NewsManagementComponent implements OnInit {
   }
 
   protected deleteArticle(article: NewsArticle): void {
-    if (!this.auth.hasRole('admin')) return;
+    if (!this.auth.canDeleteContent()) return;
     this.confirmation.confirm({
       header: 'Delete news article?',
       message: `“${article.title}” will be permanently deleted.`,

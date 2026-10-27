@@ -14,7 +14,7 @@ export class UsersManagementComponent implements OnInit {
   ngOnInit(): void { this.header.showUsersList(); this.loadPage(1); }
   protected addUser(): void { void this.router.navigateByUrl('/dashboard/users/new'); }
   protected changePage(page: number): void { if (Number.isInteger(page) && page > 0) this.loadPage(page); }
-  protected canManage(user: DashboardUser): boolean { return this.auth.hasRole('super_admin') ? user.role !== 'super_admin' : user.role === 'editor'; }
+  protected canManage(user: DashboardUser): boolean { return this.auth.canManageUser(user.role); }
   protected deleteUser(user: DashboardUser): void {
     if (!this.canManage(user)) return;
     this.confirmation.confirm({ header: 'Delete user?', message: `“${user.name}” will be permanently removed.`, acceptLabel: 'Delete', rejectLabel: 'Cancel', acceptButtonStyleClass: 'p-button-danger', accept: () => this.facade.remove(user.id).subscribe({ next: () => { this.loadPage(1); this.messages.add({ severity: 'success', summary: 'User deleted', detail: 'The user has been removed successfully.', life: 3500 }); } }) });

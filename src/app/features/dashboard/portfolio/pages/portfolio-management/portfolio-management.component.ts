@@ -33,7 +33,7 @@ export class PortfolioManagementComponent implements OnInit {
     { label: 'Draft', value: 'Draft' },
   ];
   protected readonly items = this.facade.items;
-  protected readonly canDelete = () => this.auth.hasRole('admin');
+  protected readonly canDelete = () => this.auth.canDeleteContent();
   protected readonly filteredItems = computed(() => {
     const query = this.query().trim().toLowerCase();
     const status = this.status();
@@ -70,7 +70,7 @@ export class PortfolioManagementComponent implements OnInit {
   }
 
   protected deleteItem(item: PortfolioItem): void {
-    if (!this.auth.hasRole('admin')) return;
+    if (!this.auth.canDeleteContent()) return;
     this.confirmation.confirm({
       header: 'Delete portfolio item?',
       message: `“${item.title}” will be permanently deleted.`,
