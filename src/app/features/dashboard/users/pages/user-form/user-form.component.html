@@ -3,7 +3,18 @@
   <form class="team-form user-form" [formGroup]="form" (ngSubmit)="save()" novalidate>
     <div class="field"><label for="name">Name *</label><input id="name" type="text" formControlName="name" placeholder="Enter full name" />@if (form.controls.name.invalid && form.controls.name.touched) { <small>Name is required.</small> }</div>
     <div class="field"><label for="email">Email *</label><input id="email" type="email" formControlName="email" placeholder="name@company.com" />@if (form.controls.email.invalid && form.controls.email.touched) { <small>Enter a valid email address.</small> }</div>
-    @if (!isEditMode()) { <div class="field"><label for="password">Password *</label><input id="password" type="password" formControlName="password" placeholder="Enter a password" autocomplete="new-password" />@if (form.controls.password.invalid && form.controls.password.touched) { <small>Password must be at least 8 characters.</small> }</div> }
+    @if (!isEditMode()) {
+      <div class="field">
+        <label for="password">Password *</label>
+        <div class="password-field">
+          <input id="password" [type]="showPassword() ? 'text' : 'password'" formControlName="password" placeholder="Enter a password" autocomplete="new-password" />
+          <button class="password-toggle" type="button" [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'" (click)="showPassword.set(!showPassword())">
+            <i class="bi" [class.bi-eye]="!showPassword()" [class.bi-eye-slash]="showPassword()"></i>
+          </button>
+        </div>
+        @if (form.controls.password.invalid && form.controls.password.touched) { <small>Password must be at least 8 characters.</small> }
+      </div>
+    }
     @if (canAssignRole()) { <div class="field"><label for="role">Role *</label><select id="role" formControlName="role">@for (role of roleOptions; track role.value) { <option [value]="role.value">{{ role.label }}</option> }</select></div> }
     <div class="form-actions"><button type="submit" class="save"><i class="bi bi-person-plus-fill"></i> {{ isEditMode() ? 'Update User' : 'Save User' }}</button><button type="button" class="cancel" (click)="cancel()"><i class="bi bi-x-lg"></i> Cancel</button></div>
   </form>

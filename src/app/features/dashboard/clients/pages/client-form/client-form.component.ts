@@ -24,8 +24,9 @@ export class ClientFormComponent implements OnInit {
   protected readonly isEditMode = signal(false);
   protected readonly logoPreview = signal('');
   protected readonly logoName = signal('');
+  private readonly logo = signal<File | undefined>(undefined);
   protected readonly form = this.formBuilder.nonNullable.group({
-    fullName: ['', [Validators.required, Validators.maxLength(100)]],
+    fullName: ['', [Validators.required, Validators.maxLength(255)]],
   });
 
   ngOnInit(): void {
@@ -59,6 +60,7 @@ export class ClientFormComponent implements OnInit {
     const reader = new FileReader();
     reader.onload = () => this.logoPreview.set(String(reader.result));
     reader.readAsDataURL(file);
+    this.logo.set(file);
     this.logoName.set(file.name);
   }
 
@@ -74,10 +76,19 @@ export class ClientFormComponent implements OnInit {
       return;
     }
 
+    if (!this.isEditMode() && !this.logo()) {
+      this.messages.add({
+        severity: 'warn',
+        summary: 'Client logo required',
+        detail: 'Upload a PNG, JPG, or WEBP client logo before saving.',
+        life: 3500,
+      });
+      return;
+    }
+
     const payload: ClientPayload = {
       ...this.form.getRawValue(),
-      logoUrl: this.logoPreview() || undefined,
-      logoName: this.logoName() || undefined,
+      logo: this.logo(),
     };
     const request = this.clientId !== null ? this.facade.update(this.clientId, payload) : this.facade.create(payload);
 
@@ -89,13 +100,13 @@ export class ClientFormComponent implements OnInit {
           detail: 'The client has been saved successfully.',
           life: 3500,
         });
-        this.router.navigateByUrl('/dashboard/clients');
+        void this.router.navigateByUrl('/dashboard/clients');
       },
     });
   }
 
   protected cancel(): void {
-    this.router.navigateByUrl('/dashboard/clients');
+    void this.router.navigateByUrl('/dashboard/clients');
   }
 
   private loadClient(id: number): void {
@@ -104,9 +115,9 @@ export class ClientFormComponent implements OnInit {
         this.clientId = client.id;
         this.form.patchValue({ fullName: client.fullName });
         this.logoPreview.set(client.logoUrl ?? '');
-        this.logoName.set(client.logoName ?? '');
+        this.logoName.set('');
       },
-      error: () => this.router.navigateByUrl('/dashboard/clients'),
+      error: () => void this.router.navigateByUrl('/dashboard/clients'),
     });
   }
 }

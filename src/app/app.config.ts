@@ -15,7 +15,7 @@ import { TeamApiRepository } from './features/dashboard/team/data-access/team-ap
 import { TEAM_REPOSITORY } from './features/dashboard/team/data-access/team.repository';
 import { CountersApiRepository } from './features/dashboard/counters/data-access/counters-api.repository';
 import { COUNTERS_REPOSITORY } from './features/dashboard/counters/data-access/counters.repository';
-import { ClientMockRepository } from './features/dashboard/clients/data-access/client-mock.repository';
+import { ClientApiRepository } from './features/dashboard/clients/data-access/client-api.repository';
 import { CLIENT_REPOSITORY } from './features/dashboard/clients/data-access/client.repository';
 import { EventApiRepository } from './features/dashboard/events/data-access/event-api.repository';
 import { EVENT_REPOSITORY } from './features/dashboard/events/data-access/event.repository';
@@ -45,8 +45,7 @@ export const appConfig: ApplicationConfig = {
     { provide: NEWS_REPOSITORY, useExisting: NewsMockRepository },
     { provide: TEAM_REPOSITORY, useExisting: TeamApiRepository },
     { provide: COUNTERS_REPOSITORY, useExisting: CountersApiRepository },
-    // Replace ClientMockRepository with the API implementation when endpoints are ready.
-    { provide: CLIENT_REPOSITORY, useExisting: ClientMockRepository },
+    { provide: CLIENT_REPOSITORY, useExisting: ClientApiRepository },
     { provide: EVENT_REPOSITORY, useExisting: EventApiRepository },
     { provide: CONTACT_INFO_REPOSITORY, useExisting: ContactInfoApiRepository },
     { provide: APP_LINKS_REPOSITORY, useExisting: AppLinksApiRepository },

@@ -4,11 +4,11 @@ export interface Client {
   id: EntityId;
   fullName: string;
   logoUrl?: string;
-  logoName?: string;
+  createdAt?: string | null;
+  updatedAt?: string | null;
 }
 
 export interface ClientPayload {
   fullName: string;
-  logoUrl?: string;
-  logoName?: string;
+  logo?: File;
 }

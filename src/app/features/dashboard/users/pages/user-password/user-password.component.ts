@@ -23,6 +23,8 @@ export class UserPasswordComponent implements OnInit {
 
   private userId: number | string | null = null;
   protected readonly userName = signal('');
+  protected readonly showPassword = signal(false);
+  protected readonly showConfirmPassword = signal(false);
   protected readonly form = this.formBuilder.nonNullable.group({
     password: ['', [Validators.required, Validators.minLength(8)]],
     confirmPassword: ['', Validators.required],

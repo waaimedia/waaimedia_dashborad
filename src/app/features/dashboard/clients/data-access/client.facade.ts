@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { tap } from 'rxjs';
 import { EntityId } from '../../../../core/data-access/crud-repository';
+import { PageRequest } from '../../../../core/data-access/pagination.model';
 import { Client, ClientPayload } from './client.model';
 import { CLIENT_REPOSITORY } from './client.repository';
 
@@ -9,13 +10,17 @@ export class ClientFacade {
   private readonly repository = inject(CLIENT_REPOSITORY);
 
   readonly clients = signal<Client[]>([]);
+  readonly totalRecords = signal(0);
   readonly loading = signal(false);
 
-  load() {
+  load(request: PageRequest = { page: 1, pageSize: 10 }) {
     this.loading.set(true);
-    return this.repository.list().pipe(
+    return this.repository.list(request).pipe(
       tap({
-        next: (clients) => this.clients.set(clients),
+        next: ({ items, totalRecords }) => {
+          this.clients.set(items);
+          this.totalRecords.set(totalRecords);
+        },
         finalize: () => this.loading.set(false),
       }),
     );
@@ -26,14 +31,14 @@ export class ClientFacade {
   }
 
   create(payload: ClientPayload) {
-    return this.repository.create(payload).pipe(tap(() => this.load().subscribe()));
+    return this.repository.create(payload);
   }
 
   update(id: EntityId, payload: ClientPayload) {
-    return this.repository.update(id, payload).pipe(tap(() => this.load().subscribe()));
+    return this.repository.update(id, payload);
   }
 
   remove(id: EntityId) {
-    return this.repository.remove(id).pipe(tap(() => this.load().subscribe()));
+    return this.repository.remove(id);
   }
 }

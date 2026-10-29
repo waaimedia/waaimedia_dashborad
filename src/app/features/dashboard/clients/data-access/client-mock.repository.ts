@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
-import { CrudRepository, EntityId } from '../../../../core/data-access/crud-repository';
+import { EntityId } from '../../../../core/data-access/crud-repository';
+import { PageRequest, PageResult } from '../../../../core/data-access/pagination.model';
 import { Client, ClientPayload } from './client.model';
+import { ClientRepository } from './client.repository';
 
 @Injectable({ providedIn: 'root' })
-export class ClientMockRepository implements CrudRepository<Client, ClientPayload> {
+export class ClientMockRepository implements ClientRepository {
   private clients: Client[] = [
     { id: 1, fullName: 'Horizon Group', logoUrl: 'https://i.pravatar.cc/160?img=47' },
     { id: 2, fullName: 'Vertex Solutions', logoUrl: 'https://i.pravatar.cc/160?img=12' },
@@ -12,8 +14,12 @@ export class ClientMockRepository implements CrudRepository<Client, ClientPayloa
     { id: 4, fullName: 'Apex Partners', logoUrl: 'https://i.pravatar.cc/160?img=14' },
   ];
 
-  list(): Observable<Client[]> {
-    return of([...this.clients]);
+  list(request: PageRequest): Observable<PageResult<Client>> {
+    const start = (request.page - 1) * request.pageSize;
+    return of({
+      items: this.clients.slice(start, start + request.pageSize),
+      totalRecords: this.clients.length,
+    });
   }
 
   getById(id: EntityId): Observable<Client> {
@@ -22,7 +28,7 @@ export class ClientMockRepository implements CrudRepository<Client, ClientPayloa
   }
 
   create(payload: ClientPayload): Observable<Client> {
-    const client: Client = { ...payload, id: Date.now() };
+    const client: Client = { id: Date.now(), fullName: payload.fullName };
     this.clients = [client, ...this.clients];
     return of(client);
   }

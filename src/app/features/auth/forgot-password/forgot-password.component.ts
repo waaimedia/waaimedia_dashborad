@@ -21,6 +21,8 @@ export class ForgotPasswordComponent implements OnDestroy {
 
   protected readonly step = signal<1 | 2 | 3>(1);
   protected readonly submitting = signal(false);
+  protected readonly showPassword = signal(false);
+  protected readonly showConfirmPassword = signal(false);
   protected readonly resendCooldown = signal(0);
   protected readonly otpExpiresIn = signal(0);
   protected readonly emailForm = this.formBuilder.nonNullable.group({

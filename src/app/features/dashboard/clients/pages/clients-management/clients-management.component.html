@@ -13,7 +13,7 @@
         <span>Actions</span>
       </div>
 
-      @for (client of paginatedClients(); track client.id) {
+      @for (client of clients(); track client.id) {
         <article class="client-row">
           <div class="client-logo">
             @if (client.logoUrl) {
@@ -42,7 +42,7 @@
     <app-pagination
       [page]="page()"
       [pageSize]="pageSize"
-      [totalRecords]="clients().length"
+      [totalRecords]="totalRecords()"
       (pageChange)="changePage($event)"
     />
   </article>

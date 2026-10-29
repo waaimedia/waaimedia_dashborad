@@ -1,7 +1,15 @@
 import { InjectionToken } from '@angular/core';
-import { CrudRepository } from '../../../../core/data-access/crud-repository';
+import { Observable } from 'rxjs';
+import { EntityId } from '../../../../core/data-access/crud-repository';
+import { PageRequest, PageResult } from '../../../../core/data-access/pagination.model';
 import { Client, ClientPayload } from './client.model';
 
-export const CLIENT_REPOSITORY = new InjectionToken<CrudRepository<Client, ClientPayload>>(
-  'CLIENT_REPOSITORY',
-);
+export interface ClientRepository {
+  list(request: PageRequest): Observable<PageResult<Client>>;
+  getById(id: EntityId): Observable<Client>;
+  create(payload: ClientPayload): Observable<Client>;
+  update(id: EntityId, payload: ClientPayload): Observable<Client>;
+  remove(id: EntityId): Observable<void>;
+}
+
+export const CLIENT_REPOSITORY = new InjectionToken<ClientRepository>('CLIENT_REPOSITORY');

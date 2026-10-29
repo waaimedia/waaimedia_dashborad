@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { PaginationComponent } from '../../../../../shared/ui/pagination/pagination.component';
@@ -22,17 +22,14 @@ export class ClientsManagementComponent implements OnInit {
   private readonly auth = inject(AuthService);
 
   protected readonly page = signal(1);
-  protected readonly pageSize = 4;
+  protected readonly pageSize = 10;
   protected readonly clients = this.facade.clients;
+  protected readonly totalRecords = this.facade.totalRecords;
   protected readonly canDelete = () => this.auth.canDeleteContent();
-  protected readonly paginatedClients = computed(() => {
-    const start = (this.page() - 1) * this.pageSize;
-    return this.clients().slice(start, start + this.pageSize);
-  });
 
   ngOnInit(): void {
     this.header.showClientsList();
-    this.facade.load().subscribe();
+    this.loadPage(1);
   }
 
   protected addClient(): void {
@@ -40,7 +37,8 @@ export class ClientsManagementComponent implements OnInit {
   }
 
   protected changePage(page: number): void {
-    this.page.set(page);
+    if (!Number.isInteger(page) || page < 1) return;
+    this.loadPage(page);
   }
 
   protected deleteClient(client: Client): void {
@@ -54,7 +52,7 @@ export class ClientsManagementComponent implements OnInit {
       accept: () => {
         this.facade.remove(client.id).subscribe({
           next: () => {
-            this.page.set(1);
+            this.loadPage(1);
             this.messages.add({
               severity: 'success',
               summary: 'Client deleted',
@@ -65,5 +63,10 @@ export class ClientsManagementComponent implements OnInit {
         });
       },
     });
+  }
+
+  private loadPage(page: number): void {
+    this.page.set(page);
+    this.facade.load({ page, pageSize: this.pageSize }).subscribe();
   }
 }

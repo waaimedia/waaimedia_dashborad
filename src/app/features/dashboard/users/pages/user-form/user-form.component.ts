@@ -14,6 +14,7 @@ export class UserFormComponent implements OnInit {
   private userId: number | string | null = null;
   private originalRole: AssignableUserRole | 'super_admin' | null = null;
   protected readonly isEditMode = signal(false);
+  protected readonly showPassword = signal(false);
   protected readonly canAssignRole = () => this.auth.hasRole('super_admin') && this.originalRole !== 'super_admin';
   protected readonly roleOptions: { label: string; value: AssignableUserRole }[] = [{ label: 'Editor', value: 'editor' }, { label: 'Admin', value: 'admin' }];
   protected readonly form = this.formBuilder.nonNullable.group({ name: ['', [Validators.required, Validators.maxLength(255)]], email: ['', [Validators.required, Validators.email]], password: ['', [Validators.required, Validators.minLength(8)]], role: ['editor' as AssignableUserRole, Validators.required] });
