@@ -1,96 +1,30 @@
 <section class="news-page">
   <div class="news-heading">
     <h2>News Management</h2>
-    <button class="add-news" type="button" (click)="addNews()">
-      <i class="bi bi-plus-lg"></i> Add News
-    </button>
+    <button class="add-news" type="button" (click)="addNews()"><i class="bi bi-plus-lg"></i> Add News</button>
   </div>
 
   <article class="articles-panel">
     <div class="panel-toolbar">
       <h3>Recent Articles</h3>
       <div class="filters flex-wrap">
-        <label class="search-field">
-          <i class="bi bi-search"></i>
-          <input
-            type="search"
-            placeholder="Search articles..."
-            [value]="query()"
-            (input)="setQuery($any($event.target).value)"
-            aria-label="Search articles"
-          />
-        </label>
-        <p-select
-          [options]="categoryOptions"
-          optionLabel="label"
-          optionValue="value"
-          [ngModel]="category()"
-          (ngModelChange)="setCategory($event)"
-          ariaLabel="Filter by category"
-          styleClass="category-filter-select"
-        />
-        <p-select
-          [options]="statusOptions"
-          optionLabel="label"
-          optionValue="value"
-          [ngModel]="status()"
-          (ngModelChange)="setStatus($event)"
-          ariaLabel="Filter by status"
-          styleClass="status-select"
-        />
+        <label class="search-field"><i class="bi bi-search"></i><input type="search" placeholder="Search articles..." [value]="query()" (input)="setQuery($any($event.target).value)" aria-label="Search articles" /></label>
+        <p-select [options]="categoryOptions()" optionLabel="label" optionValue="value" [ngModel]="categoryId()" (ngModelChange)="setCategory($event)" ariaLabel="Filter by category" styleClass="category-filter-select" />
+        <p-select [options]="statusOptions" optionLabel="label" optionValue="value" [ngModel]="status()" (ngModelChange)="setStatus($event)" ariaLabel="Filter by status" styleClass="status-select" />
       </div>
     </div>
 
     <div class="articles-table">
-      <div class="table-head">
-        <span>Title</span>
-        <span>Category</span>
-        <span>Status</span>
-        <span>Actions</span>
-      </div>
-
-      @for (article of paginatedArticles(); track article.id) {
+      <div class="table-head"><span>Title</span><span>Category</span><span>Status</span><span>Actions</span></div>
+      @for (article of articles(); track article.id) {
         <article class="article-row">
-          <div class="article-title">
-            <span class="article-icon"><i class="bi bi-newspaper"></i></span>
-            <div>
-              <strong>{{ articleTitle(article) }}</strong>
-              <span>{{ article.excerpt }}</span>
-            </div>
-          </div>
-          <span class="article-category">{{ article.category }}</span>
-          <span class="status" [class.status--draft]="article.status === 'Draft'">{{
-            article.status
-          }}</span>
-          <div class="actions">
-            <a
-              [routerLink]="['/dashboard/news', article.id, 'edit']"
-              [attr.aria-label]="'Edit ' + articleTitle(article)"
-            >
-              <i class="bi bi-pencil-square"></i>
-            </a>
-            @if (canDelete()) {
-              <button
-                type="button"
-                class="delete"
-                [attr.aria-label]="'Delete ' + articleTitle(article)"
-                (click)="deleteArticle(article)"
-              >
-                <i class="bi bi-trash3-fill"></i>
-              </button>
-            }
-          </div>
+          <div class="article-title"><span class="article-icon"><i class="bi bi-newspaper"></i></span><div><strong>{{ title(article) }}</strong><span>{{ summary(article) }}</span></div></div>
+          <span class="article-category">{{ categoryName(article) }}</span>
+          <span class="status" [class.status--draft]="article.status === 'draft'">{{ article.status }}</span>
+          <div class="actions"><a [routerLink]="['/dashboard/news', article.id, 'edit']" [attr.aria-label]="'Edit ' + title(article)"><i class="bi bi-pencil-square"></i></a>@if (canDelete()) { <button type="button" class="delete" (click)="deleteArticle(article)" [attr.aria-label]="'Delete ' + title(article)"><i class="bi bi-trash3-fill"></i></button> }</div>
         </article>
-      } @empty {
-        <p class="empty-state">No articles match your filters.</p>
-      }
+      } @empty { <p class="empty-state">No news articles match your filters.</p> }
     </div>
-
-    <app-pagination
-      [page]="page()"
-      [pageSize]="pageSize"
-      [totalRecords]="filteredArticles().length"
-      (pageChange)="changePage($event)"
-    />
+    <app-pagination [page]="page()" [pageSize]="pageSize" [totalRecords]="totalRecords()" (pageChange)="changePage($event)" />
   </article>
 </section>

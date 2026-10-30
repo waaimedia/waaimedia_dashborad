@@ -1,247 +1,26 @@
 <section class="news-form-page">
-  <div class="mobile-form-heading">
-    <h2>{{ isEditMode() ? 'Update News' : 'Add News' }}</h2>
-    <p>
-      {{ isEditMode() ? 'Update and publish your article' : 'Create and publish new articles' }}
-    </p>
-  </div>
-
-  <form
-    class="news-form"
-    [class.news-form--arabic]="isArabic()"
-    [formGroup]="form"
-    (ngSubmit)="save('Published')"
-    novalidate
-  >
-    <label class="arabic-toggle">
-      <span>
-        <strong>Arabic news</strong>
-        <small>Add only the title and content for an Arabic article.</small>
-      </span>
-      <input type="checkbox" formControlName="isArabic" aria-label="Arabic news" />
-      <i aria-hidden="true"></i>
-    </label>
-
-    <div class="form-grid">
-      <div class="field">
-        <label [attr.for]="isArabic() ? 'arabic-title' : 'title'">
-          {{ isArabic() ? 'عنوان الخبر' : 'News Title' }}
-        </label>
-        <input
-          [id]="isArabic() ? 'arabic-title' : 'title'"
-          type="text"
-          [formControl]="isArabic() ? form.controls.arabicTitle : form.controls.title"
-          [placeholder]="isArabic() ? 'أدخل عنوان الخبر...' : 'Enter news title...'"
-          [attr.dir]="isArabic() ? 'rtl' : null"
-        />
-        @if (isActiveTitleInvalid()) {
-          <small>{{ isArabic() ? 'عنوان الخبر مطلوب.' : 'News title is required.' }}</small>
-        }
-      </div>
-
-      <div class="field">
-        <label [attr.for]="isArabic() ? 'arabic-author-name' : 'author-name'">
-          {{ isArabic() ? 'اسم المؤلف' : 'Author Name' }}
-        </label>
-        <input
-          [id]="isArabic() ? 'arabic-author-name' : 'author-name'"
-          type="text"
-          [formControl]="
-            isArabic() ? form.controls.arabicAuthorName : form.controls.authorName
-          "
-          [placeholder]="isArabic() ? 'أدخل اسم المؤلف...' : 'Enter author name...'"
-          [attr.dir]="isArabic() ? 'rtl' : null"
-        />
-      </div>
-
-      @if (!isArabic()) {
-        <div class="field">
-          <label for="category">Category</label>
-          <p-select
-            inputId="category"
-            [options]="categories"
-            optionLabel="label"
-            optionValue="value"
-            formControlName="category"
-            placeholder="Select category..."
-            styleClass="category-select"
-          />
-          @if (form.controls.category.invalid && form.controls.category.touched) {
-            <small>Choose a category.</small>
-          }
-        </div>
-      }
-
-      @if (!isArabic() && isEntertainment()) {
-        <div class="field">
-          <label for="subcategory">Subcategory</label>
-          <p-select
-            inputId="subcategory"
-            [options]="entertainmentSubcategories"
-            optionLabel="label"
-            optionValue="value"
-            formControlName="subcategory"
-            placeholder="Select subcategory..."
-            styleClass="category-select"
-          />
-          @if (form.controls.subcategory.invalid && form.controls.subcategory.touched) {
-            <small>Choose a subcategory.</small>
-          }
-        </div>
-      }
+  <div class="mobile-form-heading"><h2>{{ isEditMode() ? 'Update News' : 'Add News' }}</h2><p>Create bilingual news articles for the website.</p></div>
+  <form class="news-form" [formGroup]="form" (ngSubmit)="save('published')" novalidate>
+    <div class="form-grid mb-3">
+      <div class="field"><label for="category">News Category</label><p-select inputId="category" [options]="categoryOptions()" optionLabel="label" optionValue="value" formControlName="categoryId" placeholder="Select a leaf category..." styleClass="category-select" /></div>
     </div>
 
-    <div class="field description-field">
-      <label [attr.for]="isArabic() ? 'arabic-description' : 'description'">
-        {{ isArabic() ? 'وصف الخبر' : 'Description' }}
-      </label>
-      <textarea
-        [id]="isArabic() ? 'arabic-description' : 'description'"
-        [formControl]="
-          isArabic() ? form.controls.arabicDescription : form.controls.description
-        "
-        [placeholder]="isArabic() ? 'أدخل وصف الخبر...' : 'Enter news description...'"
-        [attr.dir]="isArabic() ? 'rtl' : null"
-        rows="4"
-      ></textarea>
+    <div class="form-grid bilingual-grid">
+      <div class="field"><label for="title-en">English Title</label><input id="title-en" type="text" formControlName="titleEn" placeholder="Enter the English title..." /></div>
+      <div class="field" dir="rtl"><label for="title-ar">عنوان الخبر</label><input id="title-ar" type="text" formControlName="titleAr" placeholder="أدخل عنوان الخبر..." /></div>
+      <div class="field"><label for="author-en">English Author Name</label><input id="author-en" type="text" formControlName="authorNameEn" placeholder="Enter author name..." /></div>
+      <div class="field" dir="rtl"><label for="author-ar">اسم الكاتب</label><input id="author-ar" type="text" formControlName="authorNameAr" placeholder="أدخل اسم الكاتب..." /></div>
+      <div class="field"><label for="description-en">English Short Description</label><textarea id="description-en" formControlName="shortDescriptionEn" rows="4" placeholder="A brief English summary..."></textarea></div>
+      <div class="field" dir="rtl"><label for="description-ar">الوصف المختصر</label><textarea id="description-ar" formControlName="shortDescriptionAr" rows="4" placeholder="وصف مختصر للخبر..."></textarea></div>
     </div>
 
-    @if (!isArabic()) {
-      <div class="field featured-image">
-        <label for="featured-image">Featured Image</label>
-        <label class="upload-area" for="featured-image">
-          <input
-            id="featured-image"
-            type="file"
-            accept="image/png,image/jpeg"
-            (change)="selectImage($event)"
-          />
-          @if (featuredImagePreview()) {
-            <img
-              class="featured-image-preview"
-              [src]="featuredImagePreview()"
-              [alt]="'Preview of ' + imageName()"
-            />
-            <strong>{{ imageName() }}</strong>
-            <span>Click to replace image</span>
-          } @else {
-            <i class="bi bi-cloud-arrow-up-fill"></i>
-            <strong>Click to upload image</strong>
-            <span>PNG, JPG up to 10MB</span>
-          }
-        </label>
-      </div>
-    }
+    <div class="field featured-image"><label for="featured-image">Featured Image</label><label class="upload-area" for="featured-image"><input id="featured-image" type="file" accept="image/png,image/jpeg,image/webp" (change)="selectFeaturedImage($event)" />@if (featuredImagePreview()) { <img class="featured-image-preview" [src]="featuredImagePreview()" [alt]="'Preview of ' + imageName()" /><strong>{{ imageName() }}</strong><span>Click to replace image</span> } @else { <i class="bi bi-cloud-arrow-up-fill"></i><strong>Click to upload a featured image</strong><span>PNG, JPG, WEBP up to 10MB</span> }</label></div>
 
-    <div class="field">
-      <label [attr.for]="isArabic() ? 'arabic-content' : 'content'">
-        {{ isArabic() ? 'محتوى الخبر' : 'Article Content' }}
-      </label>
-      <input
-        #contentImageInput
-        class="editor-image-input"
-        type="file"
-        accept="image/png,image/jpeg,image/webp"
-        multiple
-        (change)="selectContentImages($event)"
-      />
-      <p-editor
-        [attr.id]="isArabic() ? 'arabic-content' : 'content'"
-        [formControl]="isArabic() ? form.controls.arabicContent : form.controls.content"
-        [placeholder]="
-          isArabic() ? 'اكتب محتوى الخبر هنا...' : 'Write your article content here...'
-        "
-        [styleClass]="isArabic() ? 'article-editor article-editor--rtl' : 'article-editor'"
-        (onInit)="onEditorInit($event)"
-        (onTextChange)="updateContentPreview($event)"
-      >
-        <ng-template #header>
-          <span class="ql-formats">
-            <select class="ql-font" aria-label="Font family">
-              <option selected></option>
-              <option value="serif"></option>
-              <option value="monospace"></option>
-            </select>
-            <select class="ql-size" aria-label="Font size">
-              <option value="small"></option>
-              <option selected></option>
-              <option value="large"></option>
-              <option value="huge"></option>
-            </select>
-          </span>
-          <span class="ql-formats">
-            <select class="ql-header" aria-label="Heading level">
-              <option value="1">Heading 1</option>
-              <option value="2">Heading 2</option>
-              <option selected>Normal</option>
-            </select>
-            <button type="button" class="ql-bold" aria-label="Bold"></button>
-            <button type="button" class="ql-italic" aria-label="Italic"></button>
-            <button type="button" class="ql-underline" aria-label="Underline"></button>
-            <button type="button" class="ql-strike" aria-label="Strikethrough"></button>
-          </span>
-          <span class="ql-formats">
-            <select class="ql-color" aria-label="Text color"></select>
-            <select class="ql-background" aria-label="Text background color"></select>
-            <button type="button" class="ql-blockquote" aria-label="Quote"></button>
-            <button type="button" class="ql-code-block" aria-label="Code block"></button>
-          </span>
-          <span class="ql-formats">
-            <button
-              type="button"
-              class="ql-list"
-              value="ordered"
-              aria-label="Numbered list"
-            ></button>
-            <button type="button" class="ql-list" value="bullet" aria-label="Bullet list"></button>
-            <button
-              type="button"
-              class="ql-indent"
-              value="-1"
-              aria-label="Decrease indent"
-            ></button>
-            <button
-              type="button"
-              class="ql-indent"
-              value="+1"
-              aria-label="Increase indent"
-            ></button>
-            <select class="ql-align" aria-label="Text alignment"></select>
-          </span>
-          <span class="ql-formats">
-            <button type="button" class="ql-link" aria-label="Add link"></button>
-            <button type="button" class="ql-image" aria-label="Upload images"></button>
-            <button type="button" class="ql-clean" aria-label="Clear formatting"></button>
-          </span>
-        </ng-template>
-      </p-editor>
-      <small class="editor-help"
-        >Use the image button to select one or more images. You can also format text, add colors,
-        and insert links.</small
-      >
-      @if (isActiveContentInvalid()) {
-        <small>{{
-          isArabic()
-            ? 'محتوى الخبر يجب ألا يقل عن 20 حرفًا.'
-            : 'Article content must be at least 20 characters.'
-        }}</small>
-      }
+    <div class="form-grid bilingual-grid editors-grid">
+      <div class="field"><label for="content-en">English Article Content</label><input #englishImageInput class="editor-image-input" type="file" accept="image/png,image/jpeg,image/webp" multiple (change)="selectEditorImages('en', $event)" /><button class="editor-upload" type="button" (click)="chooseEditorImage('en')" [disabled]="uploadingEditorImage()"><i class="bi bi-image"></i> Add image to English content</button><p-editor inputId="content-en" formControlName="contentEn" placeholder="Write the English article content..." styleClass="article-editor" (onInit)="onEditorInit('en', $event)" /></div>
+      <div class="field" dir="rtl"><label for="content-ar">محتوى الخبر</label><input #arabicImageInput class="editor-image-input" type="file" accept="image/png,image/jpeg,image/webp" multiple (change)="selectEditorImages('ar', $event)" /><button class="editor-upload" type="button" (click)="chooseEditorImage('ar')" [disabled]="uploadingEditorImage()"><i class="bi bi-image"></i> إضافة صورة للمحتوى العربي</button><p-editor inputId="content-ar" formControlName="contentAr" placeholder="اكتب محتوى الخبر هنا..." styleClass="article-editor article-editor--rtl" (onInit)="onEditorInit('ar', $event)" /></div>
     </div>
-
-    <!-- @if (previewHtml()) {
-      <section class="article-preview" aria-label="Article preview">
-        <div class="article-preview__header">
-          <span>Live Preview</span>
-          <small>This is how the article body will appear.</small>
-        </div>
-        <div class="article-preview__content ql-editor" [innerHTML]="previewHtml()"></div>
-      </section>
-    } -->
-
-    <div class="form-actions">
-      <button type="button" class="cancel" (click)="cancel()">Cancel</button>
-      <button type="button" class="draft" (click)="save('Draft')">Save as a Draft</button>
-      <button type="submit" class="publish"><i class="bi bi-send-fill"></i> Publish News</button>
-    </div>
+    <p class="editor-help">Editor images are uploaded to the media service and inserted with their verified image ID.</p>
+    <div class="form-actions"><button type="button" class="cancel" (click)="cancel()">Cancel</button><button type="button" class="draft" (click)="save('draft')">Save as a Draft</button><button type="submit" class="publish"><i class="bi bi-send-fill"></i> Publish News</button></div>
   </form>
 </section>

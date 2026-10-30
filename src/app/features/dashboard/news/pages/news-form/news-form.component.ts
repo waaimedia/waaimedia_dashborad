@@ -1,19 +1,15 @@
-import { Component, ElementRef, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, ElementRef, OnInit, ViewChild, inject, signal } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DomSanitizer } from '@angular/platform-browser';
-import DOMPurify from 'dompurify';
+import { firstValueFrom } from 'rxjs';
 import { MessageService } from 'primeng/api';
-import { Editor, EditorInitEvent, EditorTextChangeEvent } from 'primeng/editor';
+import { Editor, EditorInitEvent } from 'primeng/editor';
 import { Select } from 'primeng/select';
 import { DashboardHeaderService } from '../../../layout/dashboard-header.service';
 import { NewsFacade } from '../../data-access/news.facade';
-import {
-  ArticleStatus,
-  ENTERTAINMENT_SUBCATEGORIES,
-  NEWS_CATEGORIES,
-  NewsArticlePayload,
-} from '../../data-access/news.model';
+import { NewsArticlePayload, NewsCategory, NewsStatus } from '../../data-access/news.model';
+
+type EditorLanguage = 'en' | 'ar';
 
 @Component({
   selector: 'app-news-form',
@@ -22,321 +18,128 @@ import {
   styleUrl: './news-form.component.scss',
 })
 export class NewsFormComponent implements OnInit {
-  @ViewChild('contentImageInput') private contentImageInput?: ElementRef<HTMLInputElement>;
+  @ViewChild('englishImageInput') private englishImageInput?: ElementRef<HTMLInputElement>;
+  @ViewChild('arabicImageInput') private arabicImageInput?: ElementRef<HTMLInputElement>;
 
   private readonly formBuilder = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly sanitizer = inject(DomSanitizer);
   private readonly messages = inject(MessageService);
   private readonly header = inject(DashboardHeaderService);
-  private readonly newsFacade = inject(NewsFacade);
-
+  private readonly facade = inject(NewsFacade);
   private articleId: number | string | null = null;
-  private editor: any;
+  private featuredImage?: File;
+  private featuredImageId: number | null = null;
+  private readonly editors: Partial<Record<EditorLanguage, any>> = {};
+
   protected readonly isEditMode = signal(false);
   protected readonly imageName = signal('');
   protected readonly featuredImagePreview = signal('');
-  protected readonly contentPreview = signal('');
-  protected readonly previewHtml = computed(() => {
-    const content = this.contentPreview();
-    if (!content) {
-      return '';
-    }
-
-    const sanitizedContent = DOMPurify.sanitize(content, {
-      ADD_ATTR: ['target'],
-    });
-
-    return this.sanitizer.bypassSecurityTrustHtml(sanitizedContent);
-  });
-  protected readonly categories = NEWS_CATEGORIES.map((category) => ({
-    label: category,
-    value: category,
-  }));
-  protected readonly entertainmentSubcategories = ENTERTAINMENT_SUBCATEGORIES.map(
-    (subcategory) => ({
-      label: subcategory,
-      value: subcategory,
-    }),
-  );
-  protected readonly isEntertainment = signal(false);
-  protected readonly isArabic = signal(false);
+  protected readonly uploadingEditorImage = signal(false);
+  protected readonly categoryOptions = signal<Array<{ label: string; value: number }>>([]);
   protected readonly form = this.formBuilder.nonNullable.group({
-    title: ['', [Validators.required, Validators.maxLength(180)]],
-    arabicTitle: [''],
-    description: [''],
-    arabicDescription: [''],
-    authorName: [''],
-    arabicAuthorName: [''],
-    isArabic: false,
-    category: ['', Validators.required],
-    subcategory: [''],
-    content: ['', [Validators.required, Validators.minLength(20)]],
-    arabicContent: [''],
+    titleEn: [''], titleAr: [''], authorNameEn: [''], authorNameAr: [''],
+    shortDescriptionEn: [''], shortDescriptionAr: [''], contentEn: [''], contentAr: [''], categoryId: 0,
   });
-
-  private loadArticle(id: number): void {
-    this.newsFacade.getById(id).subscribe({
-      next: (article) => {
-        this.articleId = article.id;
-        this.isEditMode.set(true);
-        this.imageName.set(article.imageName ?? '');
-        const isArabic = article.isArabic ?? false;
-        this.form.patchValue({
-          title: isArabic ? '' : (article.title ?? ''),
-          arabicTitle: article.arabicTitle ?? (isArabic ? (article.title ?? '') : ''),
-          description: isArabic ? '' : (article.description ?? ''),
-          arabicDescription:
-            article.arabicDescription ?? (isArabic ? (article.description ?? '') : ''),
-          authorName: isArabic ? '' : (article.authorName ?? ''),
-          arabicAuthorName: article.arabicAuthorName ?? (isArabic ? (article.authorName ?? '') : ''),
-          category: article.category ?? '',
-          subcategory: article.subcategory ?? '',
-          content: isArabic ? '' : (article.content ?? ''),
-          arabicContent: article.arabicContent ?? (isArabic ? (article.content ?? '') : ''),
-          isArabic,
-        });
-        this.contentPreview.set(
-          isArabic ? (article.arabicContent ?? article.content ?? '') : (article.content ?? ''),
-        );
-      },
-      error: () => this.router.navigateByUrl('/dashboard/news'),
-    });
-  }
 
   ngOnInit(): void {
-    this.form.controls.category.valueChanges.subscribe((category) => {
-      this.updateSubcategoryControl(category);
-    });
-    this.form.controls.isArabic.valueChanges.subscribe((isArabic) => {
-      this.updateArabicControls(isArabic);
-    });
-    this.updateSubcategoryControl(this.form.controls.category.value);
-    this.updateArabicControls(this.form.controls.isArabic.value);
-
     const idParam = this.route.snapshot.paramMap.get('id');
     const id = idParam === null ? null : Number(idParam);
-    const isEditing = id !== null && Number.isFinite(id);
-
-    this.isEditMode.set(isEditing);
-    if (id !== null && Number.isFinite(id)) {
-      this.loadArticle(id);
-    }
-
-    this.header.showNewsForm(this.isEditMode());
+    const editing = id !== null && Number.isFinite(id);
+    this.isEditMode.set(editing);
+    this.header.showNewsForm(editing);
+    this.facade.loadCategories().subscribe({ next: (categories) => this.categoryOptions.set(this.toLeafOptions(categories)) });
+    if (editing) this.loadArticle(id!);
   }
 
-  private updateSubcategoryControl(category: string): void {
-    const subcategoryControl = this.form.controls.subcategory;
-    const isEntertainment = !this.isArabic() && category === 'Entertainment';
-
-    this.isEntertainment.set(isEntertainment);
-    subcategoryControl.setValidators(isEntertainment ? [Validators.required] : []);
-    if (!isEntertainment) {
-      subcategoryControl.setValue('', { emitEvent: false });
-    }
-    subcategoryControl.updateValueAndValidity({ emitEvent: false });
-  }
-
-  private updateArabicControls(isArabic: boolean): void {
-    const categoryControl = this.form.controls.category;
-    const subcategoryControl = this.form.controls.subcategory;
-    const titleControl = this.form.controls.title;
-    const contentControl = this.form.controls.content;
-    const arabicTitleControl = this.form.controls.arabicTitle;
-    const arabicContentControl = this.form.controls.arabicContent;
-
-    this.isArabic.set(isArabic);
-    if (isArabic) {
-      this.isEntertainment.set(false);
-      categoryControl.clearValidators();
-      subcategoryControl.clearValidators();
-      titleControl.clearValidators();
-      contentControl.clearValidators();
-      arabicTitleControl.setValidators([Validators.required, Validators.maxLength(180)]);
-      arabicContentControl.setValidators([Validators.required, Validators.minLength(20)]);
-      subcategoryControl.updateValueAndValidity({ emitEvent: false });
-    } else {
-      categoryControl.setValidators([Validators.required]);
-      titleControl.setValidators([Validators.required, Validators.maxLength(180)]);
-      contentControl.setValidators([Validators.required, Validators.minLength(20)]);
-      arabicTitleControl.clearValidators();
-      arabicContentControl.clearValidators();
-      this.updateSubcategoryControl(categoryControl.value);
-    }
-    categoryControl.updateValueAndValidity({ emitEvent: false });
-    titleControl.updateValueAndValidity({ emitEvent: false });
-    contentControl.updateValueAndValidity({ emitEvent: false });
-    arabicTitleControl.updateValueAndValidity({ emitEvent: false });
-    arabicContentControl.updateValueAndValidity({ emitEvent: false });
-    this.contentPreview.set(isArabic ? arabicContentControl.value : contentControl.value);
-  }
-
-  protected isActiveTitleInvalid(): boolean {
-    const control = this.isArabic() ? this.form.controls.arabicTitle : this.form.controls.title;
-    return control.invalid && control.touched;
-  }
-
-  protected isActiveContentInvalid(): boolean {
-    const control = this.isArabic() ? this.form.controls.arabicContent : this.form.controls.content;
-    return control.invalid && control.touched;
-  }
-
-  protected async selectImage(event: Event): Promise<void> {
+  protected async selectFeaturedImage(event: Event): Promise<void> {
     const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    if (!this.isValidImage(file)) { this.showInvalidImage(); return; }
+    this.featuredImage = file;
+    this.imageName.set(file.name);
+    this.featuredImagePreview.set(URL.createObjectURL(file));
+  }
 
-    if (!file) {
+  protected onEditorInit(language: EditorLanguage, event: EditorInitEvent): void { this.editors[language] = event.editor; }
+  protected chooseEditorImage(language: EditorLanguage): void { (language === 'en' ? this.englishImageInput : this.arabicImageInput)?.nativeElement.click(); }
+
+  protected async selectEditorImages(language: EditorLanguage, event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const files = Array.from(input.files ?? []); input.value = '';
+    const validFiles = files.filter((file) => this.isValidImage(file));
+    if (validFiles.length !== files.length) this.showInvalidImage();
+    if (!validFiles.length || !this.editors[language]) return;
+    this.uploadingEditorImage.set(true);
+    try {
+      for (const file of validFiles) {
+        const image = await firstValueFrom(this.facade.uploadImage(file, 'editor'));
+        this.insertEditorImage(language, image.id, image.url);
+      }
+    } finally { this.uploadingEditorImage.set(false); }
+  }
+
+  protected async save(status: NewsStatus): Promise<void> {
+    const value = this.form.getRawValue();
+    if (!value.categoryId || !(value.titleEn.trim() || value.titleAr.trim())) {
+      this.messages.add({ severity: 'warn', summary: 'Choose a category and add a title', detail: 'A draft needs a valid news category and at least one title.', life: 4000 });
       return;
     }
-
-    if (!['image/png', 'image/jpeg'].includes(file.type) || file.size > 10 * 1024 * 1024) {
-      this.messages.add({
-        severity: 'warn',
-        summary: 'Invalid image',
-        detail: 'Use a PNG or JPG image up to 10MB.',
-        life: 3500,
-      });
+    if (status === 'published' && !this.isPublishReady()) {
+      this.messages.add({ severity: 'warn', summary: 'Complete both languages before publishing', detail: 'Publishing needs Arabic and English titles, author names, summaries, content, a leaf category, and a featured image.', life: 5500 });
       return;
     }
 
     try {
-      const preview = await this.fileToDataUrl(file);
-      this.imageName.set(file.name);
-      this.featuredImagePreview.set(preview);
-    } catch {
-      this.messages.add({
-        severity: 'error',
-        summary: 'Image preview unavailable',
-        detail: 'The selected image could not be read. Please try another image.',
-        life: 3500,
-      });
-    }
+      const uploadedFeaturedImageId = this.featuredImage ? (await firstValueFrom(this.facade.uploadImage(this.featuredImage, 'featured'))).id : this.featuredImageId;
+      const payload: NewsArticlePayload = { ...value, featuredImageId: uploadedFeaturedImageId, status };
+      const request = this.articleId === null ? this.facade.create(payload) : this.facade.update(this.articleId, payload);
+      await firstValueFrom(request);
+      this.messages.add({ severity: 'success', summary: this.isEditMode() ? 'News updated' : 'News created', detail: status === 'published' ? 'Your news article has been published.' : 'Your news article was saved as a draft.', life: 3500 });
+      await this.router.navigateByUrl('/dashboard/news');
+    } catch { /* HTTP interceptor displays the API error. */ }
   }
 
-  protected onEditorInit(event: EditorInitEvent): void {
-    this.editor = event.editor;
-    const toolbar = this.editor.getModule('toolbar');
+  protected cancel(): void { void this.router.navigateByUrl('/dashboard/news'); }
 
-    toolbar.addHandler('image', () => this.contentImageInput?.nativeElement.click());
-  }
-
-  protected updateContentPreview(event: EditorTextChangeEvent): void {
-    this.contentPreview.set(event.htmlValue ?? '');
-  }
-
-  protected selectContentImages(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const files = Array.from(input.files ?? []);
-    input.value = '';
-
-    const validImages = files.filter(
-      (file) =>
-        ['image/png', 'image/jpeg', 'image/webp'].includes(file.type) &&
-        file.size <= 5 * 1024 * 1024,
-    );
-
-    if (validImages.length !== files.length) {
-      this.messages.add({
-        severity: 'warn',
-        summary: 'Some images were skipped',
-        detail: 'Use PNG, JPG, or WEBP files up to 5MB each.',
-        life: 4000,
-      });
-    }
-
-    if (!validImages.length || !this.editor) {
-      return;
-    }
-
-    void this.insertContentImages(validImages);
-  }
-
-  private async insertContentImages(files: File[]): Promise<void> {
-    for (const file of files) {
-      const imageUrl = await this.fileToDataUrl(file);
-      const range = this.editor.getSelection(true) ?? { index: this.editor.getLength(), length: 0 };
-
-      this.editor.insertEmbed(range.index, 'image', imageUrl, 'user');
-      this.editor.setSelection(range.index + 1, 0, 'silent');
-    }
-  }
-
-  private fileToDataUrl(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result));
-      reader.onerror = () => reject(reader.error);
-      reader.readAsDataURL(file);
-    });
-  }
-
-  protected save(status: ArticleStatus): void {
-    console.log("Saving news article..." , this.form.value);
-
-    if (status === 'Published' && this.form.invalid) {
-      this.form.markAllAsTouched();
-      this.messages.add({
-        severity: 'warn',
-        summary: 'Complete the required fields',
-        detail: this.isArabic()
-          ? 'News title and article content are required before saving.'
-          : 'News title, category, and article content are required before saving.',
-        life: 3500,
-      });
-      return;
-    }
-
-    const {
-      isArabic,
-      title,
-      arabicTitle,
-      description,
-      arabicDescription,
-      authorName,
-      arabicAuthorName,
-      category,
-      subcategory,
-      content,
-      arabicContent,
-    } = this.form.getRawValue();
-    const payload: NewsArticlePayload = {
-      isArabic,
-      ...(isArabic
-        ? { arabicTitle, arabicDescription, arabicAuthorName, arabicContent }
-        : {
-            title,
-            description,
-            authorName,
-            content,
-            category,
-            ...(this.isEntertainment() ? { subcategory } : {}),
-            imageName: this.imageName(),
-          }),
-      status,
-    };
-    const request =
-      this.articleId !== null
-        ? this.newsFacade.update(this.articleId, payload)
-        : this.newsFacade.create(payload);
-
-    request.subscribe({
-      next: () => {
-        this.messages.add({
-          severity: 'success',
-          summary: this.isEditMode() ? 'News updated' : 'News created',
-          detail:
-            status === 'Published'
-              ? 'Your news article has been published.'
-              : 'Your news article was saved as a draft.',
-          life: 3500,
+  private loadArticle(id: number): void {
+    this.facade.getById(id).subscribe({
+      next: (article) => {
+        this.articleId = article.id; this.featuredImageId = article.featuredImageId;
+        this.imageName.set(article.featuredImageUrl ? 'Current featured image' : ''); this.featuredImagePreview.set(article.featuredImageUrl);
+        this.form.patchValue({
+          titleEn: article.titleEn, titleAr: article.titleAr, authorNameEn: article.authorNameEn, authorNameAr: article.authorNameAr,
+          shortDescriptionEn: article.shortDescriptionEn, shortDescriptionAr: article.shortDescriptionAr,
+          contentEn: article.contentEn, contentAr: article.contentAr, categoryId: article.categoryId,
         });
-        this.router.navigateByUrl('/dashboard/news');
-      },
+      }, error: () => void this.router.navigateByUrl('/dashboard/news'),
     });
   }
 
-  protected cancel(): void {
-    this.router.navigateByUrl('/dashboard/news');
+  private toLeafOptions(categories: NewsCategory[]): Array<{ label: string; value: number }> {
+    return categories.flatMap((category) => category.children.length
+      ? category.children.map((child) => ({ label: `${category.nameEn} / ${child.nameEn}`, value: child.id }))
+      : [{ label: category.nameEn, value: category.id }]);
   }
+
+  private insertEditorImage(language: EditorLanguage, imageId: number, url: string): void {
+    const editor = this.editors[language];
+    const range = editor.getSelection(true) ?? { index: editor.getLength(), length: 0 };
+    editor.insertEmbed(range.index, 'image', url, 'user');
+    const images = Array.from(editor.root.querySelectorAll('img')) as HTMLImageElement[];
+    const image = images.find((element) => element.getAttribute('src') === url);
+    image?.setAttribute('data-image-id', String(imageId));
+    editor.setSelection(range.index + 1, 0, 'silent');
+  }
+
+  private isPublishReady(): boolean {
+    const value = this.form.getRawValue();
+    return Boolean(this.featuredImage || this.featuredImageId) && Boolean(value.categoryId) && [
+      value.titleEn, value.titleAr, value.authorNameEn, value.authorNameAr, value.shortDescriptionEn, value.shortDescriptionAr,
+    ].every((field) => field.trim().length > 0) && [value.contentEn, value.contentAr].every((content) => this.htmlText(content).length > 0);
+  }
+
+  private htmlText(html: string): string { const element = document.createElement('div'); element.innerHTML = html; return (element.textContent ?? '').trim(); }
+  private isValidImage(file: File): boolean { return ['image/png', 'image/jpeg', 'image/webp'].includes(file.type) && file.size <= 10 * 1024 * 1024; }
+  private showInvalidImage(): void { this.messages.add({ severity: 'warn', summary: 'Invalid image', detail: 'Use a PNG, JPG, or WEBP image up to 10MB.', life: 4000 }); }
 }

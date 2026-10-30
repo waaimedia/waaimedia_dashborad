@@ -9,7 +9,7 @@ import { routes } from './app.routes';
 import { authInterceptor } from './core/auth/auth.interceptor';
 import { httpErrorInterceptor } from './core/http/http-error.interceptor';
 import { loadingInterceptor } from './core/http/loading.interceptor';
-import { NewsMockRepository } from './features/dashboard/news/data-access/news-mock.repository';
+import { NewsApiRepository } from './features/dashboard/news/data-access/news-api.repository';
 import { NEWS_REPOSITORY } from './features/dashboard/news/data-access/news.repository';
 import { TeamApiRepository } from './features/dashboard/team/data-access/team-api.repository';
 import { TEAM_REPOSITORY } from './features/dashboard/team/data-access/team.repository';
@@ -41,8 +41,7 @@ export const appConfig: ApplicationConfig = {
     ),
     MessageService,
     ConfirmationService,
-    // Replace NewsMockRepository with the API implementation when endpoints are ready.
-    { provide: NEWS_REPOSITORY, useExisting: NewsMockRepository },
+    { provide: NEWS_REPOSITORY, useExisting: NewsApiRepository },
     { provide: TEAM_REPOSITORY, useExisting: TeamApiRepository },
     { provide: COUNTERS_REPOSITORY, useExisting: CountersApiRepository },
     { provide: CLIENT_REPOSITORY, useExisting: ClientApiRepository },
