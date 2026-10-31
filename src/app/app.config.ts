@@ -23,7 +23,7 @@ import { ContactInfoApiRepository } from './features/dashboard/contact-info/data
 import { CONTACT_INFO_REPOSITORY } from './features/dashboard/contact-info/data-access/contact-info.repository';
 import { AppLinksApiRepository } from './features/dashboard/app-links/data-access/app-links-api.repository';
 import { APP_LINKS_REPOSITORY } from './features/dashboard/app-links/data-access/app-links.repository';
-import { BlogMockRepository } from './features/dashboard/blogs/data-access/blog-mock.repository';
+import { BlogApiRepository } from './features/dashboard/blogs/data-access/blog-api.repository';
 import { BLOG_REPOSITORY } from './features/dashboard/blogs/data-access/blog.repository';
 import { UserApiRepository } from './features/dashboard/users/data-access/user-api.repository';
 import { USER_REPOSITORY } from './features/dashboard/users/data-access/user.repository';
@@ -48,8 +48,7 @@ export const appConfig: ApplicationConfig = {
     { provide: EVENT_REPOSITORY, useExisting: EventApiRepository },
     { provide: CONTACT_INFO_REPOSITORY, useExisting: ContactInfoApiRepository },
     { provide: APP_LINKS_REPOSITORY, useExisting: AppLinksApiRepository },
-    // Replace BlogMockRepository with the API implementation when endpoints are ready.
-    { provide: BLOG_REPOSITORY, useExisting: BlogMockRepository },
+    { provide: BLOG_REPOSITORY, useExisting: BlogApiRepository },
     { provide: USER_REPOSITORY, useExisting: UserApiRepository },
     { provide: BACKGROUND_MUSIC_REPOSITORY, useExisting: BackgroundMusicApiRepository },
     // Replace PortfolioMockRepository with the API implementation when endpoints are ready.

@@ -1,25 +1,59 @@
 import { EntityId } from '../../../../core/data-access/crud-repository';
 
-export type BlogStatus = 'Published' | 'Draft';
+export type BlogStatus = 'draft' | 'published';
+
+export interface BlogCategory {
+  id: number;
+  slug: string;
+  nameAr: string;
+  nameEn: string;
+  parentId: number | null;
+  parent?: Pick<BlogCategory, 'id' | 'slug' | 'nameAr' | 'nameEn'> | null;
+  children: BlogCategory[];
+}
+
+export interface BlogImage { id: number; url: string; }
 
 export interface BlogPost {
   id: EntityId;
-  title: string;
-  excerpt: string;
-  category: string;
+  slug: string | null;
   status: BlogStatus;
-  linkOne?: string;
-  linkTwo?: string;
-  content?: string;
-  imageName?: string;
+  titleAr: string;
+  titleEn: string;
+  authorNameAr: string;
+  authorNameEn: string;
+  shortDescriptionAr: string;
+  shortDescriptionEn: string;
+  contentAr: string;
+  contentEn: string;
+  categoryId: number;
+  category: BlogCategory | null;
+  featuredImageId: number | null;
+  featuredImageUrl: string;
+  editorImages: BlogImage[];
+  publishedAt: string | null;
+  createdAt: string | null;
+  updatedAt: string | null;
 }
 
 export interface BlogPostPayload {
-  title: string;
-  category: string;
+  titleAr: string;
+  titleEn: string;
+  authorNameAr: string;
+  authorNameEn: string;
+  shortDescriptionAr: string;
+  shortDescriptionEn: string;
+  contentAr: string;
+  contentEn: string;
+  categoryId: number;
+  featuredImageId?: number | null;
   status: BlogStatus;
-  linkOne?: string;
-  linkTwo?: string;
-  content: string;
-  imageName?: string;
+}
+
+export interface BlogListRequest {
+  page: number;
+  pageSize: number;
+  search?: string;
+  categoryId?: number;
+  status?: BlogStatus;
 }
