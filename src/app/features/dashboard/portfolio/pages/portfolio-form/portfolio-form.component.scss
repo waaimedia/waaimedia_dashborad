@@ -11,16 +11,33 @@
 ::ng-deep .category-select { border-color: #d6dce5; border-radius: var(--waai-radius-sm); min-height: var(--waai-control-height-lg); width: 100%; }
 ::ng-deep .category-select .p-select-label { padding: .75rem 1rem; }
 .featured-image { margin: 2.6rem 0; }
+.web-links { margin-top: 2.5rem; }
+.media-section { border-top: 1px solid #e4e7ec; margin-top: 2.5rem; padding-top: 2rem; }
+.media-heading { align-items: center; display: flex; gap: 1rem; justify-content: space-between; margin-bottom: 1rem; }
+.media-heading h3 { color: #344054; font-size: 1rem; margin: 0 0 .35rem; }
+.media-heading p, .media-empty { color: #7b8594; font-size: .88rem; margin: 0; }
+.add-media { background: #fff0f2; border: 1px solid #f2c8ce; border-radius: var(--waai-radius-sm); color: var(--waai-primary); cursor: pointer; font: inherit; font-weight: 700; padding: .65rem 1rem; }
+.media-entry, .existing-media { align-items: center; background: #fafbfc; border: 1px solid #e4e7ec; border-radius: .55rem; display: flex; gap: .8rem; margin-top: .75rem; padding: .75rem; }
+.media-entry input { background: #fff; border: 1px solid #d6dce5; border-radius: .35rem; flex: 1; font: inherit; min-height: 2.5rem; padding: 0 .75rem; }
+.file-choice { color: #586477; cursor: pointer; font-size: .9rem; font-weight: 700; }
+.file-choice input { display: block; margin-top: .35rem; max-width: 14rem; }
+.existing-media { color: #586477; font-size: .87rem; justify-content: space-between; }
+.existing-media span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.existing-media button, .remove-media { background: transparent; border: 0; color: #d43f51; cursor: pointer; font: inherit; font-weight: 700; }
+.remove-media { font-size: 1rem; margin-left: auto; }
+.reset-confirm { align-items: center; color: #586477; display: flex; font-size: .88rem; gap: .6rem; margin-top: 1.7rem; }
 .upload-area { align-items: center; border: 2px dashed #d7dde6; border-radius: var(--waai-radius-sm); color: #697586; cursor: pointer; display: flex; flex-direction: column; gap: .2rem; justify-content: center; min-height: 10rem; padding: 1.25rem; }
 .upload-area:hover { background: #fffafb; border-color: var(--waai-primary); }
 .upload-area input { display: none; }
 .upload-area i { color: #a4aebd; font-size: 2rem; }
 .upload-area strong { font-weight: 500; }
 .upload-area span { color: #9aa4b2; font-size: .86rem; }
+.cover-preview { border-radius: .5rem; height: 8rem; object-fit: cover; width: min(100%, 18rem); }
+.media-thumbnail { border-radius: .4rem; flex: 0 0 auto; height: 3.5rem; object-fit: cover; width: 3.5rem; }
 .form-actions { border-top: 1px solid #e4e7ec; display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2.7rem; padding-top: 2rem; }
 .form-actions button { border-radius: var(--waai-radius-sm); cursor: pointer; font: inherit; font-weight: 700; min-height: var(--waai-control-height-lg); padding: 0 1.5rem; }
 .cancel { background: #fff; border: 1px solid #d2d9e3; color: #586477; }
 .draft { background: #fff0f2; border: 1px solid #f2c8ce; color: #586477; }
 .publish { background: var(--waai-primary); border: 1px solid var(--waai-primary); color: #fff; }
 .publish:hover { background: var(--waai-primary-dark); }
-@media (max-width: 900px) { .mobile-form-heading { display: block; margin: 0 .9rem 1.2rem; } .mobile-form-heading h2 { color: #1f2937; font-size: 1.25rem; margin: 0 0 .3rem; } .mobile-form-heading p { color: #7b8594; margin: 0; } .portfolio-form { margin: 0; padding: 1.4rem; } .form-grid { gap: 1.25rem; grid-template-columns: 1fr; } .featured-image { margin: 1.5rem 0; } .form-actions { flex-wrap: wrap; margin-top: 1.8rem; } .form-actions button { flex: 1 1 100%; } }
+@media (max-width: 900px) { .mobile-form-heading { display: block; margin: 0 .9rem 1.2rem; } .mobile-form-heading h2 { color: #1f2937; font-size: 1.25rem; margin: 0 0 .3rem; } .mobile-form-heading p { color: #7b8594; margin: 0; } .portfolio-form { margin: 0; padding: 1.4rem; } .form-grid { gap: 1.25rem; grid-template-columns: 1fr; } .featured-image { margin: 1.5rem 0; } .media-heading { align-items: flex-start; flex-direction: column; } .media-entry { align-items: stretch; flex-wrap: wrap; } .media-entry input { flex-basis: 80%; } .form-actions { flex-wrap: wrap; margin-top: 1.8rem; } .form-actions button { flex: 1 1 100%; } }

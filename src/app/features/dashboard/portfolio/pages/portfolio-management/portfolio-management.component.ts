@@ -29,8 +29,8 @@ export class PortfolioManagementComponent implements OnInit {
   protected readonly pageSize = 10;
   protected readonly statusOptions = [
     { label: 'All Status', value: 'All' },
-    { label: 'Published', value: 'Published' },
-    { label: 'Draft', value: 'Draft' },
+    { label: 'Published', value: 'published' },
+    { label: 'Draft', value: 'draft' },
   ];
   protected readonly items = this.facade.items;
   protected readonly canDelete = () => this.auth.canDeleteContent();
@@ -38,7 +38,7 @@ export class PortfolioManagementComponent implements OnInit {
     const query = this.query().trim().toLowerCase();
     const status = this.status();
     return this.items().filter((item) =>
-      (!query || item.title.toLowerCase().includes(query)) && (status === 'All' || item.status === status),
+      (!query || item.titleEn.toLowerCase().includes(query) || (item.titleAr ?? '').toLowerCase().includes(query)) && (status === 'All' || item.status === status),
     );
   });
   protected readonly paginatedItems = computed(() => {
@@ -73,7 +73,7 @@ export class PortfolioManagementComponent implements OnInit {
     if (!this.auth.canDeleteContent()) return;
     this.confirmation.confirm({
       header: 'Delete portfolio item?',
-      message: `“${item.title}” will be permanently deleted.`,
+      message: `“${item.titleEn}” will be permanently deleted.`,
       acceptLabel: 'Delete',
       rejectLabel: 'Cancel',
       acceptButtonStyleClass: 'p-button-danger',

@@ -1,53 +1,232 @@
 <section class="portfolio-form-page">
   <div class="mobile-form-heading">
     <h2>{{ isEditMode() ? 'Update Portfolio Item' : 'Add Portfolio Item' }}</h2>
-    <p>{{ isEditMode() ? 'Update your project details' : 'Add a project to your portfolio' }}</p>
+    <p>Set up the work, media and publishing state.</p>
   </div>
 
-  <form class="portfolio-form" [formGroup]="form" (ngSubmit)="save('Published')" novalidate>
+  <form class="portfolio-form" [formGroup]="form" (ngSubmit)="save('published')" novalidate>
     <div class="form-grid">
       <div class="field">
-        <label for="title">Project Title</label>
-        <input id="title" type="text" formControlName="title" placeholder="Enter project title..." />
-        @if (form.controls.title.invalid && form.controls.title.touched) { <small>Project title is required.</small> }
+        <label for="client">Client</label
+        ><p-select
+          inputId="client"
+          [options]="clients()"
+          optionLabel="name"
+          optionValue="id"
+          formControlName="clientId"
+          placeholder="Select client..."
+          styleClass="category-select"
+        />
       </div>
-
       <div class="field">
-        <label for="category">Category</label>
-        <p-select inputId="category" [options]="categories" optionLabel="label" optionValue="value" formControlName="category" placeholder="Select category..." styleClass="category-select" />
-        @if (form.controls.category.invalid && form.controls.category.touched) { <small>Choose a category.</small> }
+        <label for="category">Main Category</label
+        ><p-select
+          inputId="category"
+          [options]="categories()"
+          optionLabel="name"
+          optionValue="id"
+          formControlName="categoryId"
+          placeholder="Select category..."
+          styleClass="category-select"
+        />
       </div>
-
+      @if (subcategories().length) {
+        <div class="field">
+          <label for="subcategory">Subcategory</label
+          ><p-select
+            inputId="subcategory"
+            [options]="subcategories()"
+            optionLabel="name"
+            optionValue="id"
+            formControlName="subcategoryId"
+            placeholder="Select subcategory..."
+            styleClass="category-select"
+          />
+        </div>
+      }
       <div class="field">
-        <label for="link-one">Project Link</label>
-        <input id="link-one" type="url" formControlName="linkOne" placeholder="https://example.com" />
-        @if (form.controls.linkOne.invalid && form.controls.linkOne.touched) { <small>Enter a valid URL.</small> }
+        <label for="title-en">Project Title (English)</label
+        ><input
+          id="title-en"
+          type="text"
+          formControlName="titleEn"
+          placeholder="Enter English project title..."
+        />
+        @if (form.controls.titleEn.invalid && form.controls.titleEn.touched) {
+          <small>An English title with a Latin letter or number is required.</small>
+        }
       </div>
-
       <div class="field">
-        <label for="link-two">Second Link</label>
-        <input id="link-two" type="url" formControlName="linkTwo" placeholder="https://example.com" />
-        @if (form.controls.linkTwo.invalid && form.controls.linkTwo.touched) { <small>Enter a valid URL.</small> }
+        <label for="title-ar">Project Title (Arabic)</label
+        ><input
+          id="title-ar"
+          type="text"
+          formControlName="titleAr"
+          dir="rtl"
+          placeholder="أدخل العنوان العربي..."
+        />
       </div>
     </div>
 
     <div class="field featured-image">
-      <label for="featured-image">Featured Image</label>
-      <label class="upload-area" for="featured-image">
-        <input id="featured-image" type="file" accept="image/png,image/jpeg" (change)="selectImage($event)" />
-        <i class="bi bi-cloud-arrow-up-fill"></i>
-        @if (imageName()) {
-          <strong>{{ imageName() }}</strong><span>Click to replace image</span>
+      <label for="cover-image">Portfolio Cover</label
+      ><label class="upload-area" for="cover-image"
+        ><input
+          id="cover-image"
+          type="file"
+          accept="image/png,image/jpeg"
+          (change)="selectCover($event)"
+        />
+        @if (coverPreviewUrl() || existingCoverUrl()) {
+          <img
+            class="cover-preview"
+            [src]="coverPreviewUrl() || existingCoverUrl()"
+            alt="Portfolio cover preview"
+          />
         } @else {
-          <strong>Click to upload image</strong><span>PNG, JPG up to 10MB</span>
+          <i class="bi bi-cloud-arrow-up-fill"></i>
         }
-      </label>
+        <strong>{{ coverName() || 'Click to upload cover image' }}</strong
+        ><span>PNG, JPG up to 10MB. Required when publishing.</span></label
+      >
     </div>
 
+    @if (isWebDesign()) {
+      <div class="form-grid web-links">
+        <div class="field">
+          <label for="link-one">Project Link 1</label
+          ><input
+            id="link-one"
+            type="url"
+            formControlName="linkOne"
+            placeholder="https://example.com"
+          />
+        </div>
+        <div class="field">
+          <label for="link-two">Project Link 2</label
+          ><input
+            id="link-two"
+            type="url"
+            formControlName="linkTwo"
+            placeholder="https://example.com"
+          />
+        </div>
+        <div class="field">
+          <label for="link-three">Project Link 3 (optional)</label
+          ><input
+            id="link-three"
+            type="url"
+            formControlName="linkThree"
+            placeholder="https://example.com"
+          />
+        </div>
+      </div>
+      <div class="field featured-image">
+        <label for="featured-image">Web Design Featured Image</label
+        ><label class="upload-area" for="featured-image"
+          ><input
+            id="featured-image"
+            type="file"
+            accept="image/png,image/jpeg"
+            (change)="selectFeaturedImage($event)"
+          />
+          @if (featuredPreviewUrl() || existingFeaturedUrl()) {
+            <img
+              class="cover-preview"
+              [src]="featuredPreviewUrl() || existingFeaturedUrl()"
+              alt="Web design featured image preview"
+            />
+          } @else {
+            <i class="bi bi-image"></i>
+          }
+          <strong>{{ featuredImageName() || 'Click to upload featured image' }}</strong
+          ><span>Separate from the portfolio cover.</span></label
+        >
+      </div>
+    } @else if (kind()) {
+      <section class="media-section">
+        <div class="media-heading">
+          <div>
+            <h3>Work Media</h3>
+            <p>
+              {{
+                needsMediaUrl()
+                  ? needsImage()
+                    ? 'Each image needs its own destination URL.'
+                    : 'Add video URLs only.'
+                  : 'Add one or more work images.'
+              }}
+            </p>
+          </div>
+          <button type="button" class="add-media" (click)="addMedia()">
+            <i class="bi bi-plus-lg"></i> Add media
+          </button>
+        </div>
+        @for (media of existingMedia(); track media.id) {
+          <div class="existing-media">
+            @if (media.imageUrl) {
+              <img class="media-thumbnail" [src]="media.imageUrl" alt="Existing portfolio media" />
+            }
+            <span
+              >{{ media.imageUrl ? 'Existing image' : 'Existing video URL'
+              }}{{ media.url ? ' · ' + media.url : '' }}</span
+            ><button type="button" (click)="removeExistingMedia(media.id)">Remove</button>
+          </div>
+        }
+        @for (media of pendingMedia(); track $index; let index = $index) {
+          <div class="media-entry">
+            @if (needsImage()) {
+              <label class="file-choice"
+                >{{ media.fileName || 'Choose image'
+                }}<input
+                  type="file"
+                  accept="image/png,image/jpeg"
+                  (change)="setMediaFile(index, $event)"
+              /></label>
+            }
+            @if (media.previewUrl) {
+              <img
+                class="media-thumbnail"
+                [src]="media.previewUrl"
+                alt="Selected portfolio media preview"
+              />
+            }
+            @if (needsMediaUrl()) {
+              <input
+                type="url"
+                [value]="media.url || ''"
+                (input)="setMediaUrl(index, $any($event.target).value)"
+                placeholder="https://..."
+              />
+            }
+            <button
+              type="button"
+              class="remove-media"
+              (click)="removePendingMedia(index)"
+              aria-label="Remove media"
+            >
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
+        }
+        @if (!existingMedia().length && !pendingMedia().length) {
+          <p class="media-empty">No work media yet. Drafts may be saved without media.</p>
+        }
+      </section>
+    }
+
+    @if (isEditMode()) {
+      <label class="reset-confirm"
+        ><input type="checkbox" formControlName="confirmMediaReset" /> Clear old media and links if
+        this category changes to a different media type.</label
+      >
+    }
     <div class="form-actions">
-      <button type="button" class="cancel" (click)="cancel()">Cancel</button>
-      <button type="button" class="draft" (click)="save('Draft')">Save as a Draft</button>
-      <button type="submit" class="publish"><i class="bi bi-send-fill"></i> Publish Portfolio Item</button>
+      <button type="button" class="cancel" (click)="cancel()">Cancel</button
+      ><button type="button" class="draft" (click)="save('draft')">Save as a Draft</button
+      ><button type="submit" class="publish">
+        <i class="bi bi-send-fill"></i> Publish Portfolio Item
+      </button>
     </div>
   </form>
 </section>
