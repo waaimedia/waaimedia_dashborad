@@ -11,7 +11,10 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
     return next(request);
   }
 
-  const headers: Record<string, string> = { Accept: 'application/json' };
+  const headers: Record<string, string> = {
+    Accept: 'application/json',
+    'Accept-Language': 'en',
+  };
   const token = auth.getAccessToken();
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
