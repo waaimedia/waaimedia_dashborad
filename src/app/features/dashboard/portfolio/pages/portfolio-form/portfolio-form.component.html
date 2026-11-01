@@ -162,16 +162,30 @@
             <i class="bi bi-plus-lg"></i> Add media
           </button>
         </div>
-        @for (media of existingMedia(); track media.id) {
-          <div class="existing-media">
-            @if (media.imageUrl) {
-              <img class="media-thumbnail" [src]="media.imageUrl" alt="Existing portfolio media" />
-            }
-            <span
-              >{{ media.imageUrl ? 'Existing image' : 'Existing video URL'
-              }}{{ media.url ? ' · ' + media.url : '' }}</span
-            ><button type="button" (click)="removeExistingMedia(media.id)">Remove</button>
-          </div>
+        @if (requiresMediaReset()) {
+          <p class="media-empty">
+            Existing
+            {{
+              existingKind() === 'web_design' ? 'featured media and project links' : 'work media'
+            }}
+            will be cleared after you confirm the media reset below.
+          </p>
+        } @else {
+          @for (media of existingMedia(); track media.id) {
+            <div class="existing-media">
+              @if (media.imageUrl) {
+                <img
+                  class="media-thumbnail"
+                  [src]="media.imageUrl"
+                  alt="Existing portfolio media"
+                />
+              }
+              <span
+                >{{ media.imageUrl ? 'Existing image' : 'Existing video URL'
+                }}{{ media.url ? ' · ' + media.url : '' }}</span
+              ><button type="button" (click)="removeExistingMedia(media.id)">Remove</button>
+            </div>
+          }
         }
         @for (media of pendingMedia(); track $index; let index = $index) {
           <div class="media-entry">
@@ -215,10 +229,10 @@
       </section>
     }
 
-    @if (isEditMode()) {
+    @if (requiresMediaReset()) {
       <label class="reset-confirm"
-        ><input type="checkbox" formControlName="confirmMediaReset" /> Clear old media and links if
-        this category changes to a different media type.</label
+        ><input type="checkbox" formControlName="confirmMediaReset" /> I understand that changing to
+        this media type permanently clears the existing media and project links.</label
       >
     }
     <div class="form-actions">
