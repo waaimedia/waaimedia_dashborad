@@ -12,7 +12,8 @@ export class UsersManagementComponent implements OnInit {
   private readonly facade = inject(UserFacade); private readonly header = inject(DashboardHeaderService); private readonly router = inject(Router); private readonly confirmation = inject(ConfirmationService); private readonly messages = inject(MessageService); private readonly auth = inject(AuthService);
   protected readonly page = signal(1); protected readonly pageSize = 15; protected readonly users = this.facade.users; protected readonly totalRecords = this.facade.totalRecords;
   ngOnInit(): void { this.header.showUsersList(); this.loadPage(1); }
-  protected addUser(): void { void this.router.navigateByUrl('/dashboard/users/new'); }
+  protected canCreateUsers(): boolean { return this.auth.hasRole('super_admin', 'admin'); }
+  protected addUser(): void { if (this.canCreateUsers()) void this.router.navigateByUrl('/dashboard/users/new'); }
   protected changePage(page: number): void { if (Number.isInteger(page) && page > 0) this.loadPage(page); }
   protected canManage(user: DashboardUser): boolean { return this.auth.canManageUser(user.role); }
   protected deleteUser(user: DashboardUser): void {

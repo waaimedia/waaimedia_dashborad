@@ -2,6 +2,7 @@ import { EntityId } from '../../../../core/data-access/crud-repository';
 import { UserRole } from '../../../../core/auth/auth.service';
 
 export type AssignableUserRole = Exclude<UserRole, 'super_admin'>;
+export type UserCreateRole = AssignableUserRole;
 
 export interface DashboardUser {
   id: EntityId;
@@ -19,5 +20,5 @@ export interface UserProfilePayload {
 
 export interface UserCreatePayload extends UserProfilePayload {
   password: string;
-  role: AssignableUserRole;
+  role: UserCreateRole;
 }

@@ -1,5 +1,5 @@
 <section class="team-page">
-  <div class="team-heading"><h2>Manage Users</h2><button class="add-member" type="button" (click)="addUser()"><i class="bi bi-plus-lg"></i> Add User</button></div>
+  <div class="team-heading"><h2>Manage Users</h2>@if (canCreateUsers()) { <button class="add-member" type="button" (click)="addUser()"><i class="bi bi-plus-lg"></i> Add User</button> }</div>
   <article class="team-panel">
     <h3>Current Users</h3>
     <div class="team-table">

@@ -15,7 +15,7 @@
         @if (form.controls.password.invalid && form.controls.password.touched) { <small>Password must be at least 8 characters.</small> }
       </div>
     }
-    @if (canAssignRole()) { <div class="field"><label for="role">Role *</label><select id="role" formControlName="role">@for (role of roleOptions; track role.value) { <option [value]="role.value">{{ role.label }}</option> }</select></div> }
+    @if (showRoleSelector()) { <div class="field"><label for="role">Role *</label><p-select inputId="role" [options]="selectableRoleOptions()" optionLabel="label" optionValue="value" formControlName="role" placeholder="Select a role" styleClass="user-role-select" /></div> }
     <div class="form-actions"><button type="submit" class="save"><i class="bi bi-person-plus-fill"></i> {{ isEditMode() ? 'Update User' : 'Save User' }}</button><button type="button" class="cancel" (click)="cancel()"><i class="bi bi-x-lg"></i> Cancel</button></div>
   </form>
 </section>
