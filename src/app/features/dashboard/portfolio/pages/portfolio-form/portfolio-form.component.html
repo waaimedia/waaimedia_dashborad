@@ -74,7 +74,7 @@
         ><input
           id="cover-image"
           type="file"
-          accept="image/png,image/jpeg"
+          accept="image/png,image/jpeg,image/webp"
           (change)="selectCover($event)"
         />
         @if (coverPreviewUrl() || existingCoverUrl()) {
@@ -87,8 +87,8 @@
           <i class="bi bi-cloud-arrow-up-fill"></i>
         }
         <strong>{{ coverName() || 'Click to upload cover image' }}</strong
-        ><span>PNG, JPG up to 10MB. Required when publishing.</span></label
-      >
+        ><span>PNG, JPG or WebP · best under 2 MB. Required when publishing.</span></label
+      ><p class="image-guidance"><i class="bi bi-stars"></i><span><strong>Best website result:</strong> use 1600×1000 px (8:5; minimum 1280×800). This cover appears in different card shapes, so keep the main work centered for light cropping.</span></p>
     </div>
 
     @if (isWebDesign()) {
@@ -127,7 +127,7 @@
           ><input
             id="featured-image"
             type="file"
-            accept="image/png,image/jpeg"
+            accept="image/png,image/jpeg,image/webp"
             (change)="selectFeaturedImage($event)"
           />
           @if (featuredPreviewUrl() || existingFeaturedUrl()) {
@@ -141,6 +141,7 @@
           }
           <strong>{{ featuredImageName() || 'Click to upload featured image' }}</strong
           ><span>Separate from the portfolio cover.</span></label
+          ><p class="image-guidance"><i class="bi bi-stars"></i><span><strong>Use the same cover guidance:</strong> 1600×1000 px (8:5) is ideal. Keep important content centered.</span></p>
         >
       </div>
     } @else if (kind()) {
@@ -194,7 +195,7 @@
                 >{{ media.fileName || 'Choose image'
                 }}<input
                   type="file"
-                  accept="image/png,image/jpeg"
+                  accept="image/png,image/jpeg,image/webp"
                   (change)="setMediaFile(index, $event)"
               /></label>
             }
@@ -225,6 +226,9 @@
         }
         @if (!existingMedia().length && !pendingMedia().length) {
           <p class="media-empty">No work media yet. Drafts may be saved without media.</p>
+        }
+        @if (needsImage()) {
+          <p class="image-guidance image-guidance--compact"><i class="bi bi-image"></i><span><strong>Gallery image guide:</strong> use 1520×1000 px (1.52:1; minimum 1216×800), one image per item. JPG, PNG or WebP works best under 2 MB.</span></p>
         }
       </section>
     }

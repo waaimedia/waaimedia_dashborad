@@ -23,6 +23,37 @@ textarea {
   font-family: inherit;
 }
 
+/* Shared guidance beside every public-facing image upload. */
+.image-guidance {
+  align-items: flex-start;
+  background: #fff8e8;
+  border: 1px solid #f3d391;
+  border-radius: 0.65rem;
+  color: #674d17;
+  display: flex;
+  font-size: 0.86rem;
+  gap: 0.7rem;
+  line-height: 1.5;
+  margin: 0.65rem 0 0;
+  padding: 0.8rem 0.9rem;
+}
+
+.image-guidance > i {
+  color: #b7791f;
+  font-size: 1.1rem;
+  line-height: 1.45;
+}
+
+.image-guidance strong {
+  color: #503a0d;
+}
+
+.image-guidance--compact {
+  font-size: 0.8rem;
+  margin-top: 0.45rem;
+  padding: 0.6rem 0.7rem;
+}
+
 /* Keep management tables readable when the dashboard content area is narrow. */
 .dashboard-main :is(
   table,

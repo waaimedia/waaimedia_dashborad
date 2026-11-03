@@ -12,11 +12,12 @@
           <img [src]="logoPreview()" alt="Selected client logo" />
         } @else {
           <i class="bi bi-camera-fill"></i>
-          <span>Upload Photo</span>
+          <span>Upload Logo</span>
         }
         <b><i class="bi bi-plus-lg"></i></b>
       </label>
       <p>Upload a client logo @if (!isEditMode()) { <span>(required)</span> }</p>
+      <p class="image-guidance"><i class="bi bi-stars"></i><span><strong>Recommended image size:</strong> 512×512 px square (minimum 256×256). PNG or WebP is preferred; best under 500 KB.</span></p>
     </div>
 
     <div class="field">

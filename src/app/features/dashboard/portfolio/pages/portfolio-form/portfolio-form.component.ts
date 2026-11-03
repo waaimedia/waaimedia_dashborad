@@ -289,11 +289,11 @@ export class PortfolioFormComponent implements OnInit, OnDestroy {
   private setImage(event: Event, apply: (file: File) => void): void {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (!file) return;
-    if (!['image/png', 'image/jpeg'].includes(file.type) || file.size > 10 * 1024 * 1024) {
+    if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type) || file.size > 10 * 1024 * 1024) {
       this.messages.add({
         severity: 'warn',
         summary: 'Invalid image',
-        detail: 'Use a PNG or JPG image up to 10MB.',
+        detail: 'Use a PNG, JPG, or WEBP image up to 10MB.',
         life: 3500,
       });
       return;

@@ -36,6 +36,18 @@ ng build
 
 This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
 
+## Deploying to Hostinger
+
+Build the production-ready static files:
+
+```bash
+npm run build:hostinger
+```
+
+Upload the **contents** of `dist/waai-media-dashboard/browser/` to the domain's `public_html/` directory in Hostinger File Manager (or via FTP). Do not upload the enclosing `browser` folder itself; `index.html` must sit directly inside `public_html`.
+
+The output includes `.htaccess`, which makes Angular routes work when a page is refreshed or opened directly (for example, `/dashboard/news`). If the domain is hosted in a subfolder rather than the domain root, tell the deployment contact before building so the Angular base path can be configured for that subfolder.
+
 ## Running unit tests
 
 To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
